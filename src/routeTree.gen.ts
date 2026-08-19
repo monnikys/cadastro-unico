@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConsultaRouteImport } from './routes/consulta'
 import { Route as DependentesRouteImport } from './routes/dependentes'
+import { Route as ParticipantesRouteImport } from './routes/participantes'
 import { Route as PlanosRouteImport } from './routes/planos'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const DependentesRoute = DependentesRouteImport.update({
   path: '/dependentes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ParticipantesRoute = ParticipantesRouteImport.update({
+  id: '/participantes',
+  path: '/participantes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlanosRoute = PlanosRouteImport.update({
   id: '/planos',
   path: '/planos',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/consulta': typeof ConsultaRoute
   '/dependentes': typeof DependentesRoute
+  '/participantes': typeof ParticipantesRoute
   '/planos': typeof PlanosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/consulta': typeof ConsultaRoute
   '/dependentes': typeof DependentesRoute
+  '/participantes': typeof ParticipantesRoute
   '/planos': typeof PlanosRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,28 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/consulta': typeof ConsultaRoute
   '/dependentes': typeof DependentesRoute
+  '/participantes': typeof ParticipantesRoute
   '/planos': typeof PlanosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/consulta' | '/dependentes' | '/planos'
+  fullPaths: '/' | '/consulta' | '/dependentes' | '/participantes' | '/planos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/consulta' | '/dependentes' | '/planos'
-  id: '__root__' | '/' | '/consulta' | '/dependentes' | '/planos'
+  to: '/' | '/consulta' | '/dependentes' | '/participantes' | '/planos'
+  id:
+    | '__root__'
+    | '/'
+    | '/consulta'
+    | '/dependentes'
+    | '/participantes'
+    | '/planos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConsultaRoute: typeof ConsultaRoute
   DependentesRoute: typeof DependentesRoute
+  ParticipantesRoute: typeof ParticipantesRoute
   PlanosRoute: typeof PlanosRoute
 }
 
@@ -92,6 +108,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DependentesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/participantes': {
+      id: '/participantes'
+      path: '/participantes'
+      fullPath: '/participantes'
+      preLoaderRoute: typeof ParticipantesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/planos': {
       id: '/planos'
       path: '/planos'
@@ -106,6 +129,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConsultaRoute: ConsultaRoute,
   DependentesRoute: DependentesRoute,
+  ParticipantesRoute: ParticipantesRoute,
   PlanosRoute: PlanosRoute,
 }
 export const routeTree = rootRouteImport

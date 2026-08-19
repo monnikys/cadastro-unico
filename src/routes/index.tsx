@@ -15,6 +15,7 @@ import {
   YAxis,
 } from "recharts";
 import { Users, Baby, CalendarClock, Building2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Shell } from "@/components/dashboard/Shell";
 import { Panel, StatCard } from "@/components/dashboard/StatCard";
 import {
@@ -22,12 +23,12 @@ import {
   faixaEtaria,
   idadeMedia,
   nf,
+  participantes,
   planos,
   porEstado,
   porGenero,
   totalDependentes,
   totalParticipantes,
-  totalPatrocinadores,
 } from "@/data/cadastro";
 
 export const Route = createFileRoute("/")({
@@ -61,34 +62,108 @@ const tooltipStyle = {
 };
 
 function VisaoGeral() {
+  const [planoSelecionado, setPlanoSelecionado] = useState("todos");
+  const planoAtivo = planos.find((plano) => plano.sigla === planoSelecionado);
+  const planosVisiveis = planoAtivo ? [planoAtivo] : planos;
+  const participantesFiltrados = planosVisiveis.reduce(
+    (total, plano) => total + plano.participantes,
+    0,
+  );
+  const proporcao = participantesFiltrados / totalParticipantes;
+
+  const dadosFiltrados = useMemo(() => {
+    const escalarQuantidade = <T extends { quantidade: number }>(dados: T[]) =>
+      dados.map((item) => ({ ...item, quantidade: Math.round(item.quantidade * proporcao) }));
+    const escalarParticipantes = <T extends { participantes: number }>(dados: T[]) =>
+      dados.map((item) => ({ ...item, participantes: Math.round(item.participantes * proporcao) }));
+
+    const amostraDoPlano = planoAtivo
+      ? participantes.filter((participante) =>
+          participante.planos.some((plano) => plano.sigla === planoAtivo.sigla),
+        )
+      : participantes;
+    const idadeMediaFiltrada = amostraDoPlano.length
+      ? amostraDoPlano.reduce((total, participante) => total + participante.idade, 0) /
+        amostraDoPlano.length
+      : idadeMedia;
+
+    return {
+      dependentes: Math.round(totalDependentes * proporcao),
+      idadeMedia: planoAtivo ? idadeMediaFiltrada : idadeMedia,
+      patrocinadores: new Set(planosVisiveis.map((plano) => plano.patrocinador)).size,
+      porEstado: escalarParticipantes(porEstado),
+      porGenero: escalarQuantidade(porGenero),
+      faixaEtaria: escalarQuantidade(faixaEtaria),
+      evolucao: evolucao.map((item) => ({
+        ...item,
+        ativos: Math.round(item.ativos * proporcao),
+        dependentes: Math.round(item.dependentes * proporcao),
+      })),
+    };
+  }, [planoAtivo, planosVisiveis, proporcao]);
+
+  const contextoPlano = planoAtivo ? planoAtivo.sigla : "todos os planos";
+
   return (
     <Shell
       title="Visão geral do cadastro"
-      subtitle="Indicadores consolidados da base de participantes, planos e dependentes vinculados à fundação."
+      subtitle={
+        planoAtivo
+          ? `Indicadores consolidados do ${planoAtivo.descricao}.`
+          : "Indicadores consolidados da base de participantes, planos e dependentes vinculados à fundação."
+      }
     >
+      <div className="surface-card mb-4 flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-display text-sm font-semibold text-foreground">Filtro de plano</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Selecione um plano para atualizar todos os indicadores e gráficos da visão geral.
+          </p>
+        </div>
+        <label
+          className="grid gap-1 text-xs font-medium text-muted-foreground"
+          htmlFor="filtro-plano"
+        >
+          Plano
+          <select
+            id="filtro-plano"
+            value={planoSelecionado}
+            onChange={(event) => setPlanoSelecionado(event.target.value)}
+            className="h-10 min-w-64 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+          >
+            <option value="todos">Todos os planos</option>
+            {planos.map((plano) => (
+              <option key={plano.sigla} value={plano.sigla}>
+                {plano.sigla} — {plano.descricao}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Participantes"
-          value={nf.format(totalParticipantes)}
-          hint="CPFs ativos na base"
+          value={nf.format(participantesFiltrados)}
+          hint={`CPFs ativos em ${contextoPlano}`}
           icon={Users}
         />
         <StatCard
           label="Idade média"
-          value={`${idadeMedia.toFixed(1)} anos`}
-          hint="Média ponderada"
+          value={`${dadosFiltrados.idadeMedia.toFixed(1)} anos`}
+          hint={`Média da amostra de ${contextoPlano}`}
           icon={CalendarClock}
         />
         <StatCard
           label="Dependentes"
-          value={nf.format(totalDependentes)}
-          hint="Vínculos registrados"
+          value={nf.format(dadosFiltrados.dependentes)}
+          hint={`Vínculos estimados em ${contextoPlano}`}
           icon={Baby}
         />
         <StatCard
           label="Patrocinadores"
-          value={String(totalPatrocinadores)}
-          hint="Instituidores e patrocinadores"
+          value={String(dadosFiltrados.patrocinadores)}
+          hint={`Instituidores em ${contextoPlano}`}
           icon={Building2}
         />
       </div>
@@ -96,17 +171,26 @@ function VisaoGeral() {
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <Panel
           title="Participantes por plano"
-          description="Distribuição de CPFs entre os planos vigentes"
+          description={
+            planoAtivo
+              ? `Participantes vinculados ao ${planoAtivo.descricao}`
+              : "Distribuição de CPFs entre os planos vigentes"
+          }
           className="lg:col-span-2"
         >
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={planos} margin={{ left: -16, right: 8 }}>
+            <BarChart data={planosVisiveis} margin={{ left: -16, right: 8 }}>
               <CartesianGrid vertical={false} stroke="var(--color-border)" />
               <XAxis dataKey="sigla" tickLine={false} axisLine={false} {...axis} />
               <YAxis tickLine={false} axisLine={false} {...axis} />
               <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "var(--color-muted)" }} />
-              <Bar dataKey="participantes" name="Participantes" radius={[8, 8, 0, 0]} isAnimationActive={false}>
-                {planos.map((_, i) => (
+              <Bar
+                dataKey="participantes"
+                name="Participantes"
+                radius={[8, 8, 0, 0]}
+                isAnimationActive={false}
+              >
+                {planosVisiveis.map((_, i) => (
                   <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
                 ))}
               </Bar>
@@ -114,11 +198,11 @@ function VisaoGeral() {
           </ResponsiveContainer>
         </Panel>
 
-        <Panel title="Participantes por gênero" description="Base total de CPFs">
+        <Panel title="Participantes por gênero" description={`Base de ${contextoPlano}`}>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
-                data={porGenero}
+                data={dadosFiltrados.porGenero}
                 dataKey="quantidade"
                 nameKey="genero"
                 innerRadius={62}
@@ -127,7 +211,7 @@ function VisaoGeral() {
                 stroke="none"
                 isAnimationActive={false}
               >
-                {porGenero.map((_, i) => (
+                {dadosFiltrados.porGenero.map((_, i) => (
                   <Cell key={i} fill={PALETTE[i]} />
                 ))}
               </Pie>
@@ -139,10 +223,10 @@ function VisaoGeral() {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Panel title="Faixa etária" description="Quantidade de participantes por faixa">
+        <Panel title="Faixa etária" description={`Quantidade de participantes em ${contextoPlano}`}>
           <div className="space-y-3">
-            {faixaEtaria.map((f) => {
-              const max = Math.max(...faixaEtaria.map((x) => x.quantidade));
+            {dadosFiltrados.faixaEtaria.map((f) => {
+              const max = Math.max(...dadosFiltrados.faixaEtaria.map((x) => x.quantidade));
               return (
                 <div key={f.faixa}>
                   <div className="flex justify-between text-xs text-muted-foreground">
@@ -161,9 +245,12 @@ function VisaoGeral() {
           </div>
         </Panel>
 
-        <Panel title="Distribuição por estado" description="Participantes por UF de endereço">
+        <Panel
+          title="Distribuição por estado"
+          description={`Participantes de ${contextoPlano} por UF`}
+        >
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={porEstado} layout="vertical" margin={{ left: 8 }}>
+            <BarChart data={dadosFiltrados.porEstado} layout="vertical" margin={{ left: 8 }}>
               <CartesianGrid horizontal={false} stroke="var(--color-border)" />
               <XAxis type="number" tickLine={false} axisLine={false} {...axis} />
               <YAxis
@@ -189,11 +276,11 @@ function VisaoGeral() {
 
       <Panel
         title="Evolução do cadastro"
-        description="Participantes e dependentes ao longo do ano"
+        description={`Participantes e dependentes de ${contextoPlano} ao longo do ano`}
         className="mt-4"
       >
         <ResponsiveContainer width="100%" height={260}>
-          <LineChart data={evolucao} margin={{ left: -16, right: 8 }}>
+          <LineChart data={dadosFiltrados.evolucao} margin={{ left: -16, right: 8 }}>
             <CartesianGrid vertical={false} stroke="var(--color-border)" />
             <XAxis dataKey="mes" tickLine={false} axisLine={false} {...axis} />
             <YAxis tickLine={false} axisLine={false} {...axis} />

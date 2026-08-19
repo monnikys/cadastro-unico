@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LayoutDashboard, Building2, Users, Search, CircleUser } from "lucide-react";
+import { LayoutDashboard, Building2, Users, Search, CircleUser, ContactRound } from "lucide-react";
 
 const nav = [
   { to: "/", label: "Visão geral", icon: LayoutDashboard },
   { to: "/planos", label: "Planos e patrocinadores", icon: Building2 },
+  { to: "/participantes", label: "Participantes", icon: ContactRound },
   { to: "/dependentes", label: "Dependentes", icon: Users },
   { to: "/consulta", label: "Consulta por CPF", icon: Search },
 ] as const;

@@ -12,6 +12,30 @@ planos e patrocinadores, dependentes e consulta individual por CPF.
 | `/dependentes` | Dependentes: busca por nome/CPF, grau de parentesco e idade                                                             |
 | `/consulta`    | Consulta por CPF: ficha completa do participante e seus dependentes vinculados                                          |
 
+## Capturas de tela
+
+### Visão Geral
+
+![Visão Geral](img/visao-geral.png)
+![Visão Geral](img/visao-geral-2.png)
+
+### Planos + Patrocinador
+
+![Planos e Patrocinadores](img/planos-e-patrocinadores.png)
+
+### Participantes
+
+![Participantes](img/participantes.png)
+
+### Dependentes
+
+![Dependentes](img/dependentes.png)
+
+### Consulta por CPF
+
+![Consulta por CPF](img/consultas-por-cpf.png)
+![Consulta por CPF](img/consultas-por-cpf-2.png)
+
 ## Executando localmente
 
 É necessário ter o Node.js instalado ([instale com o nvm](https://github.com/nvm-sh/nvm#installing-and-updating)).

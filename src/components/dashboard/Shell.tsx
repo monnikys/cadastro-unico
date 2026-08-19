@@ -25,8 +25,12 @@ export function Shell({
         <div className="mx-auto max-w-7xl px-6 pt-6 pb-24">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-xl bg-primary-foreground/15 font-display text-lg font-bold">
-                C
+              <span className="grid size-10 place-items-center rounded-xl bg-primary-foreground/15">
+                <img
+                  src={`${import.meta.env.BASE_URL}logo-centrus-icon.svg`}
+                  alt="Centrus"
+                  className="size-6"
+                />
               </span>
               <div>
                 <p className="font-display text-base font-semibold tracking-tight">
@@ -39,7 +43,7 @@ export function Shell({
             </div>
             <div className="flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1.5 text-xs">
               <CircleUser className="size-4" />
-              Atualizado em 18/08/2026
+              Atualizado em 19/08/2026
             </div>
           </div>
 

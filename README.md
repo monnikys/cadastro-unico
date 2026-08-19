@@ -3,6 +3,22 @@
 Painel web que reproduz o relatório do Cadastro Único, com visão geral de participantes,
 planos e patrocinadores, dependentes e consulta individual por CPF.
 
+## Objetivo
+
+Centralizar e facilitar a consulta dos dados cadastrais dos participantes, dependentes e
+planos previdenciários, oferecendo uma visão consolidada que hoje está espalhada em
+relatórios separados — reduzindo o tempo de busca e evitando erros de conferência manual.
+
+## Funcionalidades básicas
+
+- **Visão geral**: indicadores consolidados de participantes, dependentes, idade média,
+  distribuição por gênero, faixa etária, estado e evolução no tempo.
+- **Planos e patrocinadores**: tabela de planos com status e filtro por patrocinador.
+- **Participantes**: listagem por plano, com identificação de CPFs com mais de um vínculo.
+- **Dependentes**: busca por nome, CPF, titular ou plano, com grau de parentesco e idade.
+- **Consulta por CPF**: busca de um participante específico por nome ou CPF, com ficha
+  completa (dados de contato, planos vinculados, situação) e seus dependentes.
+
 ## Páginas
 
 | Rota           | Descrição                                                                                                               |

@@ -1,0 +1,61 @@
+# Cadastro Único — Painel Centrus
+
+Painel web que reproduz o relatório do Cadastro Único, com visão geral de participantes,
+planos e patrocinadores, dependentes e consulta individual por CPF.
+
+## Páginas
+
+| Rota | Descrição |
+| --- | --- |
+| `/` | Visão Geral: total de participantes, dependentes, idade média, distribuição por gênero, faixa etária, estado e evolução |
+| `/planos` | Planos + Patrocinador: tabela de planos com status e filtro por patrocinador |
+| `/dependentes` | Dependentes: busca por nome/CPF, grau de parentesco e idade |
+| `/consulta` | Consulta por CPF: ficha completa do participante e seus dependentes vinculados |
+
+## Executando localmente
+
+É necessário ter o Node.js instalado ([instale com o nvm](https://github.com/nvm-sh/nvm#installing-and-updating)).
+
+```sh
+git clone <url-do-repositorio>
+cd <nome-do-repositorio>
+npm i
+npm run dev
+```
+
+O aplicativo fica disponível em `http://localhost:8080`.
+
+## Estrutura do projeto
+
+```
+src/
+  routes/               páginas do painel (roteamento por arquivos)
+  components/dashboard/ layout (Shell), cartões de indicador e painéis
+  components/ui/        componentes de interface reutilizáveis
+  data/cadastro.ts      base de dados do painel (participantes, planos, dependentes)
+  styles.css            tokens de design: cores, tipografia e utilitários
+```
+
+## Identidade visual
+
+- Paleta "Ocean Deep": azul-marinho `#0E4A6E` e verde-água `#2A9D9C`
+- Tipografia: Sora (títulos) e Manrope (texto)
+- Cartões com cantos arredondados e sombras suaves
+
+Todas as cores são definidas como tokens semânticos em `src/styles.css`; evite cores fixas nos componentes.
+
+## Tecnologias
+
+- TanStack Start (React 19 + Vite)
+- TypeScript
+- Tailwind CSS
+- Recharts (gráficos)
+
+## Versão Power BI
+
+O mesmo painel também está disponível em arquivo `.pbix`, com layout e tema equivalentes
+ao desta versão web.
+
+## Publicação
+
+Gere a build de produção e publique os arquivos estáticos no ambiente desejado.

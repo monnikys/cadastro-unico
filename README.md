@@ -5,12 +5,12 @@ planos e patrocinadores, dependentes e consulta individual por CPF.
 
 ## Páginas
 
-| Rota | Descrição |
-| --- | --- |
-| `/` | Visão Geral: total de participantes, dependentes, idade média, distribuição por gênero, faixa etária, estado e evolução |
-| `/planos` | Planos + Patrocinador: tabela de planos com status e filtro por patrocinador |
-| `/dependentes` | Dependentes: busca por nome/CPF, grau de parentesco e idade |
-| `/consulta` | Consulta por CPF: ficha completa do participante e seus dependentes vinculados |
+| Rota           | Descrição                                                                                                               |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `/`            | Visão Geral: total de participantes, dependentes, idade média, distribuição por gênero, faixa etária, estado e evolução |
+| `/planos`      | Planos + Patrocinador: tabela de planos com status e filtro por patrocinador                                            |
+| `/dependentes` | Dependentes: busca por nome/CPF, grau de parentesco e idade                                                             |
+| `/consulta`    | Consulta por CPF: ficha completa do participante e seus dependentes vinculados                                          |
 
 ## Executando localmente
 
@@ -58,4 +58,11 @@ ao desta versão web.
 
 ## Publicação
 
-Gere a build de produção e publique os arquivos estáticos no ambiente desejado.
+O projeto está configurado para publicação no GitHub Pages do repositório
+`monnikys/cadastro-unico`. Ao enviar alterações para a branch `main`, o workflow
+de GitHub Actions gera a versão estática e a publica automaticamente.
+
+No GitHub, abra **Settings → Pages** e selecione **GitHub Actions** em
+**Build and deployment**. A versão publicada ficará disponível em:
+
+`https://monnikys.github.io/cadastro-unico/`

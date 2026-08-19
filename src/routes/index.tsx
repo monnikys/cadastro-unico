@@ -63,6 +63,7 @@ const tooltipStyle = {
 
 function VisaoGeral() {
   const [planoSelecionado, setPlanoSelecionado] = useState("todos");
+  const [anoSelecionado, setAnoSelecionado] = useState("todos");
   const planoAtivo = planos.find((plano) => plano.sigla === planoSelecionado);
   const planosVisiveis = planoAtivo ? [planoAtivo] : planos;
   const participantesFiltrados = planosVisiveis.reduce(
@@ -70,6 +71,19 @@ function VisaoGeral() {
     0,
   );
   const proporcao = participantesFiltrados / totalParticipantes;
+
+  const anosDisponiveis = useMemo(
+    () => Array.from(new Set(evolucao.map((item) => item.ano))).sort((a, b) => a - b),
+    [],
+  );
+
+  const evolucaoBase = useMemo(
+    () =>
+      anoSelecionado === "todos"
+        ? evolucao
+        : evolucao.filter((item) => item.ano === Number(anoSelecionado)),
+    [anoSelecionado],
+  );
 
   const dadosFiltrados = useMemo(() => {
     const escalarQuantidade = <T extends { quantidade: number }>(dados: T[]) =>
@@ -94,15 +108,20 @@ function VisaoGeral() {
       porEstado: escalarParticipantes(porEstado),
       porGenero: escalarQuantidade(porGenero),
       faixaEtaria: escalarQuantidade(faixaEtaria),
-      evolucao: evolucao.map((item) => ({
+      evolucao: evolucaoBase.map((item) => ({
         ...item,
+        rotulo: anoSelecionado === "todos" ? `${item.mes}/${String(item.ano).slice(2)}` : item.mes,
         ativos: Math.round(item.ativos * proporcao),
         dependentes: Math.round(item.dependentes * proporcao),
       })),
     };
-  }, [planoAtivo, planosVisiveis, proporcao]);
+  }, [planoAtivo, planosVisiveis, proporcao, evolucaoBase, anoSelecionado]);
 
   const contextoPlano = planoAtivo ? planoAtivo.sigla : "todos os planos";
+  const contextoAno =
+    anoSelecionado === "todos"
+      ? `${anosDisponiveis[0]}–${anosDisponiveis[anosDisponiveis.length - 1]}`
+      : anoSelecionado;
 
   return (
     <Shell
@@ -276,13 +295,34 @@ function VisaoGeral() {
 
       <Panel
         title="Evolução do cadastro"
-        description={`Participantes e dependentes de ${contextoPlano} ao longo do ano`}
+        description={`Participantes e dependentes de ${contextoPlano} ao longo de ${contextoAno}`}
         className="mt-4"
       >
+        <div className="mb-4 flex justify-end">
+          <label
+            className="grid gap-1 text-xs font-medium text-muted-foreground"
+            htmlFor="filtro-ano"
+          >
+            Ano
+            <select
+              id="filtro-ano"
+              value={anoSelecionado}
+              onChange={(event) => setAnoSelecionado(event.target.value)}
+              className="h-10 min-w-40 rounded-md border border-input bg-background px-3 text-sm font-medium text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="todos">Todos os anos</option>
+              {anosDisponiveis.map((ano) => (
+                <option key={ano} value={ano}>
+                  {ano}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <ResponsiveContainer width="100%" height={260}>
           <LineChart data={dadosFiltrados.evolucao} margin={{ left: -16, right: 8 }}>
             <CartesianGrid vertical={false} stroke="var(--color-border)" />
-            <XAxis dataKey="mes" tickLine={false} axisLine={false} {...axis} />
+            <XAxis dataKey="rotulo" tickLine={false} axisLine={false} {...axis} />
             <YAxis tickLine={false} axisLine={false} {...axis} />
             <Tooltip contentStyle={tooltipStyle} />
             <Legend iconType="circle" wrapperStyle={{ fontSize: 12 }} />

@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Baby, HeartHandshake, Users } from "lucide-react";
+import { Baby, HeartHandshake, Search, Users } from "lucide-react";
 import { Shell } from "@/components/dashboard/Shell";
 import { Panel, StatCard } from "@/components/dashboard/StatCard";
-import { dependentes, nf, totalDependentes } from "@/data/cadastro";
+import { dependentes, nf, planos, totalDependentes } from "@/data/cadastro";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -36,16 +36,20 @@ export const Route = createFileRoute("/dependentes")({
 
 function DependentesPage() {
   const [busca, setBusca] = useState("");
+  const [planoSelecionado, setPlanoSelecionado] = useState("todos");
 
   const lista = useMemo(() => {
     const q = busca.trim().toLowerCase();
-    if (!q) return dependentes;
-    return dependentes.filter((d) =>
-      [d.nome, d.cpf, d.titular, d.cpfTitular, d.plano].some((v) =>
-        v.toLowerCase().includes(q),
-      ),
+
+    return dependentes.filter(
+      (d) =>
+        (!q ||
+          [d.nome, d.cpf, d.titular, d.cpfTitular, d.plano].some((v) =>
+            v.toLowerCase().includes(q),
+          )) &&
+        (planoSelecionado === "todos" || d.plano === planoSelecionado),
     );
-  }, [busca]);
+  }, [busca, planoSelecionado]);
 
   const conjuges = dependentes.filter((d) => d.parentesco === "Cônjuge").length;
   const menores = dependentes.filter((d) => d.idade < 21).length;
@@ -78,19 +82,37 @@ function DependentesPage() {
 
       <Panel
         title="Buscar dependente"
-        description="Pesquise por nome, CPF do dependente, titular ou plano"
+        description="Pesquise por nome, CPF do dependente, titular ou plano. Selecione um plano para filtrar a lista."
         className="mt-4"
       >
-        <Input
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          placeholder="Ex.: Helena, 118.446.702-31 ou PBD"
-          className="max-w-md"
-        />
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
+          <div className="relative">
+            <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Ex.: Helena, 118.446.702-31 ou PBD"
+              className="pl-9"
+            />
+          </div>
+          <select
+            aria-label="Filtrar por plano"
+            value={planoSelecionado}
+            onChange={(event) => setPlanoSelecionado(event.target.value)}
+            className="h-10 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <option value="todos">Todos os planos</option>
+            {planos.map((plano) => (
+              <option key={plano.sigla} value={plano.sigla}>
+                {plano.sigla} — {plano.descricao}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <div className="mt-4">
+        <div className="mt-4 max-h-130 overflow-y-auto rounded-md border">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 z-10 bg-background">
               <TableRow>
                 <TableHead>Dependente</TableHead>
                 <TableHead>CPF</TableHead>

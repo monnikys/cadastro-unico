@@ -98,9 +98,9 @@ function ParticipantesPage() {
           </select>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-4 max-h-130 overflow-y-auto rounded-md border">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 z-10 bg-background">
               <TableRow>
                 <TableHead>Participante</TableHead>
                 <TableHead>CPF</TableHead>

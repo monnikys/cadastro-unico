@@ -37,23 +37,36 @@ export const Route = createFileRoute("/consulta")({
 
 function ConsultaPage() {
   const [busca, setBusca] = useState("");
-  const [selecionado, setSelecionado] = useState(participantes[0]!.cpf);
+  const [planoSelecionado, setPlanoSelecionado] = useState("todos");
+  const [selecionado, setSelecionado] = useState<string | null>(null);
 
-  const resultados = useMemo(() => {
+  const LIMITE_RESULTADOS = 50;
+
+  const resultadosFiltrados = useMemo(() => {
     const q = busca.trim().toLowerCase();
+    // Só listamos participantes quando há busca por nome/CPF: selecionar
+    // apenas o plano não deve exibir a base inteira do plano.
     if (!q) return [];
-    return participantes.filter((p) => p.nome.toLowerCase().includes(q) || p.cpf.includes(q));
-  }, [busca]);
+    return participantes.filter((p) => {
+      const combinaBusca = !q || p.nome.toLowerCase().includes(q) || p.cpf.includes(q);
+      const combinaPlano =
+        planoSelecionado === "todos" || p.planos.some((vinculo) => vinculo.sigla === planoSelecionado);
+      return combinaBusca && combinaPlano;
+    });
+  }, [busca, planoSelecionado]);
 
-  const pessoa: Participante =
-    resultados.find((p) => p.cpf === selecionado) ?? resultados[0] ?? participantes[0]!;
-  const planosDaPessoa = pessoa.planos.flatMap((vinculo) => {
-    const plano = planos.find((item) => item.sigla === vinculo.sigla);
-    return plano
-      ? [{ ...vinculo, descricao: plano.descricao, patrocinador: plano.patrocinador }]
-      : [];
-  });
-  const deps = dependentes.filter((d) => d.cpfTitular === pessoa.cpf);
+  const resultados = resultadosFiltrados.slice(0, LIMITE_RESULTADOS);
+
+  const pessoa: Participante | null =
+    resultados.find((p) => p.cpf === selecionado) ?? resultados[0] ?? null;
+  const planosDaPessoa =
+    pessoa?.planos.flatMap((vinculo) => {
+      const plano = planos.find((item) => item.sigla === vinculo.sigla);
+      return plano
+        ? [{ ...vinculo, descricao: plano.descricao, patrocinador: plano.patrocinador }]
+        : [];
+    }) ?? [];
+  const deps = pessoa ? dependentes.filter((d) => d.cpfTitular === pessoa.cpf) : [];
 
   return (
     <Shell
@@ -96,13 +109,13 @@ function ConsultaPage() {
                 <button
                   onClick={() => setSelecionado(p.cpf)}
                   className={`w-full rounded-lg px-3 py-2 text-left transition-colors ${
-                    p.cpf === pessoa.cpf ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                    p.cpf === pessoa?.cpf ? "bg-primary text-primary-foreground" : "hover:bg-muted"
                   }`}
                 >
                   <span className="block truncate text-sm font-medium">{p.nome}</span>
                   <span
                     className={`block text-xs tabular-nums ${
-                      p.cpf === pessoa.cpf ? "text-primary-foreground/70" : "text-muted-foreground"
+                      p.cpf === pessoa?.cpf ? "text-primary-foreground/70" : "text-muted-foreground"
                     }`}
                   >
                     {p.cpf}
@@ -119,7 +132,7 @@ function ConsultaPage() {
                           key={vinculo.sigla}
                           variant="secondary"
                           className={
-                            p.cpf === pessoa.cpf
+                            p.cpf === pessoa?.cpf
                               ? "bg-primary-foreground/15 text-primary-foreground"
                               : undefined
                           }
@@ -131,7 +144,7 @@ function ConsultaPage() {
                       <Badge
                         variant="outline"
                         className={
-                          p.cpf === pessoa.cpf
+                          p.cpf === pessoa?.cpf
                             ? "border-primary-foreground/30 text-primary-foreground"
                             : undefined
                         }
@@ -146,116 +159,137 @@ function ConsultaPage() {
             ))}
             {resultados.length === 0 ? (
               <li className="px-3 py-6 text-center text-sm text-muted-foreground">
-                Nenhum participante encontrado.
+                {busca.trim()
+                  ? "Nenhum participante encontrado."
+                  : "Digite um nome ou CPF para localizar um participante."}
               </li>
             ) : null}
           </ul>
+          {resultadosFiltrados.length > LIMITE_RESULTADOS ? (
+            <p className="mt-2 px-1 text-xs text-muted-foreground">
+              Mostrando {LIMITE_RESULTADOS} de {resultadosFiltrados.length} resultados. Refine a
+              busca para ver outros participantes.
+            </p>
+          ) : null}
         </Panel>
 
         <div className="space-y-4">
-          <Panel title="Ficha do participante">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <h3 className="font-display text-2xl font-semibold">{pessoa.nome}</h3>
-                <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground tabular-nums">
-                  <IdCard className="size-4" /> {pessoa.cpf}
-                </p>
-              </div>
-              <Badge variant="secondary">
-                {pessoa.planos.length}{" "}
-                {pessoa.planos.length === 1 ? "plano vinculado" : "planos vinculados"}
-              </Badge>
-            </div>
+          {pessoa ? (
+            <>
+              <Panel title="Ficha do participante">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <h3 className="font-display text-2xl font-semibold">{pessoa.nome}</h3>
+                    <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground tabular-nums">
+                      <IdCard className="size-4" /> {pessoa.cpf}
+                    </p>
+                  </div>
+                  <Badge variant="secondary">
+                    {pessoa.planos.length}{" "}
+                    {pessoa.planos.length === 1 ? "plano vinculado" : "planos vinculados"}
+                  </Badge>
+                </div>
 
-            <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Field
-                label="Planos"
-                value={planosDaPessoa
-                  .map((plano) => `${plano.sigla} — ${plano.descricao}`)
-                  .join(" • ")}
-              />
-              <Field
-                label="Patrocinadores"
-                value={
-                  [...new Set(planosDaPessoa.map((plano) => plano.patrocinador))].join(" • ") || "—"
-                }
-              />
-              <Field
-                label="Inscrições por plano"
-                value={planosDaPessoa
-                  .map((plano) => `${plano.sigla}: ${plano.inscricao}`)
-                  .join(" • ")}
-              />
-              <Field label="Idade" value={`${pessoa.idade} anos`} />
-              <Field label="Sexo" value={pessoa.sexo === "F" ? "Feminino" : "Masculino"} />
-              <Field label="UF" value={pessoa.uf} icon={<MapPin className="size-3.5" />} />
-              <Field label="E-mail" value={pessoa.email} icon={<Mail className="size-3.5" />} />
-              <Field
-                label="Telefone"
-                value={pessoa.telefone}
-                icon={<Phone className="size-3.5" />}
-              />
-            </dl>
+                <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <Field
+                    label="Planos"
+                    value={planosDaPessoa
+                      .map((plano) => `${plano.sigla} — ${plano.descricao}`)
+                      .join(" • ")}
+                  />
+                  <Field
+                    label="Patrocinadores"
+                    value={
+                      [...new Set(planosDaPessoa.map((plano) => plano.patrocinador))].join(" • ") ||
+                      "—"
+                    }
+                  />
+                  <Field
+                    label="Inscrições por plano"
+                    value={planosDaPessoa
+                      .map((plano) => `${plano.sigla}: ${plano.inscricao}`)
+                      .join(" • ")}
+                  />
+                  <Field label="Idade" value={`${pessoa.idade} anos`} />
+                  <Field label="Sexo" value={pessoa.sexo === "F" ? "Feminino" : "Masculino"} />
+                  <Field label="UF" value={pessoa.uf} icon={<MapPin className="size-3.5" />} />
+                  <Field label="E-mail" value={pessoa.email} icon={<Mail className="size-3.5" />} />
+                  <Field
+                    label="Telefone"
+                    value={pessoa.telefone}
+                    icon={<Phone className="size-3.5" />}
+                  />
+                </dl>
 
-            <div className="mt-6">
-              <h4 className="text-sm font-semibold">Dados dos planos</h4>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Plano</TableHead>
-                    <TableHead>Patrocinador</TableHead>
-                    <TableHead>Inscrição</TableHead>
-                    <TableHead>Situação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {planosDaPessoa.map((plano) => (
-                    <TableRow key={plano.sigla}>
-                      <TableCell>
-                        <p className="font-medium">{plano.sigla}</p>
-                        <p className="text-xs text-muted-foreground">{plano.descricao}</p>
-                      </TableCell>
-                      <TableCell>{plano.patrocinador}</TableCell>
-                      <TableCell className="tabular-nums">{plano.inscricao}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{plano.situacao}</Badge>
-                      </TableCell>
+                <div className="mt-6">
+                  <h4 className="text-sm font-semibold">Dados dos planos</h4>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Plano</TableHead>
+                        <TableHead>Patrocinador</TableHead>
+                        <TableHead>Inscrição</TableHead>
+                        <TableHead>Situação</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {planosDaPessoa.map((plano) => (
+                        <TableRow key={plano.sigla}>
+                          <TableCell>
+                            <p className="font-medium">{plano.sigla}</p>
+                            <p className="text-xs text-muted-foreground">{plano.descricao}</p>
+                          </TableCell>
+                          <TableCell>{plano.patrocinador}</TableCell>
+                          <TableCell className="tabular-nums">{plano.inscricao}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">{plano.situacao}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </Panel>
+
+              <Panel title="Dependentes vinculados" description={`${deps.length} registro(s)`}>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>CPF</TableHead>
+                      <TableHead>Parentesco</TableHead>
+                      <TableHead className="text-right">Idade</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </Panel>
-
-          <Panel title="Dependentes vinculados" description={`${deps.length} registro(s)`}>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>CPF</TableHead>
-                  <TableHead>Parentesco</TableHead>
-                  <TableHead className="text-right">Idade</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {deps.map((d) => (
-                  <TableRow key={d.cpf}>
-                    <TableCell className="font-medium">{d.nome}</TableCell>
-                    <TableCell className="tabular-nums text-muted-foreground">{d.cpf}</TableCell>
-                    <TableCell>{d.parentesco}</TableCell>
-                    <TableCell className="text-right tabular-nums">{d.idade}</TableCell>
-                  </TableRow>
-                ))}
-                {deps.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
-                      Nenhum dependente vinculado.
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </Panel>
+                  </TableHeader>
+                  <TableBody>
+                    {deps.map((d) => (
+                      <TableRow key={d.cpf}>
+                        <TableCell className="font-medium">{d.nome}</TableCell>
+                        <TableCell className="tabular-nums text-muted-foreground">
+                          {d.cpf}
+                        </TableCell>
+                        <TableCell>{d.parentesco}</TableCell>
+                        <TableCell className="text-right tabular-nums">{d.idade}</TableCell>
+                      </TableRow>
+                    ))}
+                    {deps.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
+                          Nenhum dependente vinculado.
+                        </TableCell>
+                      </TableRow>
+                    ) : null}
+                  </TableBody>
+                </Table>
+              </Panel>
+            </>
+          ) : (
+            <Panel title="Ficha do participante">
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                Busque por nome, CPF ou selecione um plano para visualizar a ficha do participante.
+              </p>
+            </Panel>
+          )}
         </div>
       </div>
     </Shell>

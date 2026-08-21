@@ -51,6 +51,7 @@ relatórios separados — reduzindo o tempo de busca e evitando erros de confer�
 
 ![Consulta por CPF](img/consultas-por-cpf.png)
 ![Consulta por CPF](img/consultas-por-cpf-2.png)
+![Consulta por CPF](img/consultas-por-cpf-3.png)
 
 ## Executando localmente
 

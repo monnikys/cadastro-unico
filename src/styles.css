@@ -5,17 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
+ * Definição do design system.
  *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
+ * O bloco @theme inline mapeia variáveis CSS para classes utilitárias do
+ * Tailwind (ex.: --color-primary -> bg-primary, text-primary).
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
+ * Os blocos :root e .dark definem os valores de cor reais usando oklch.
+ * Todas as cores DEVEM usar o formato oklch.
  *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Para adicionar uma nova cor semântica:
+ * 1. Adicione a variável em :root (valor claro) e .dark (valor escuro)
+ * 2. Registre-a em @theme inline como --color-<nome>: var(--<nome>)
  */
 
 @theme inline {
@@ -178,4 +178,28 @@
 
 @utility shadow-elevated {
   box-shadow: var(--shadow-elevated);
+}
+
+/* Barra de rolagem fina e discreta, usada em listas com altura limitada. */
+@utility scrollbar-discreta {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 9999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-muted-foreground);
+  }
 }

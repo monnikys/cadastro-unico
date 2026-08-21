@@ -107,7 +107,7 @@ function ConsultaPage() {
             ))}
             <option value={CENTRUSFUNC}>CENTRUSFUNC — Colaboradores da Centrus</option>
           </select>
-          <ul className="mt-3 space-y-1.5">
+          <ul className="mt-3 max-h-125 space-y-1.5 overflow-y-auto pr-1 scrollbar-discreta">
             {resultados.map((p) => (
               <li key={p.cpf}>
                 <button

@@ -43,7 +43,7 @@ export function Shell({
             </div>
             <div className="flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1.5 text-xs">
               <CircleUser className="size-4" />
-              Atualizado em 19/08/2026
+              Atualizado em 21/08/2026
             </div>
           </div>
 

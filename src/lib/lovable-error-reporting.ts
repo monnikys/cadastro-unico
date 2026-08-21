@@ -38,11 +38,12 @@ export function reportLovableError(error: unknown, context: Record<string, unkno
       severity: "error",
     },
   );
-  // Prod React does not rethrow boundary-caught errors to window.onerror, so the
-  // editor's telemetry never sees them. Forward to lovable.js's reporting hook,
-  // which is present only inside the editor preview.
-  // Loaders and server fns commonly throw a raw Response; String(it) is the
-  // opaque "[object Response]", so pull out the status and URL instead.
+  // Em produção, o React não relança para window.onerror os erros capturados
+  // por um error boundary, então a telemetria do editor nunca os vê. Encaminha
+  // para o hook de report do lovable.js, presente apenas dentro do preview do
+  // editor.
+  // Loaders e server fns costumam lançar uma Response crua; String(it) resulta
+  // no opaco "[object Response]", então extrai o status e a URL em vez disso.
   const message =
     error instanceof Response
       ? `Response ${error.status}${error.url ? ` at ${error.url}` : ""}`

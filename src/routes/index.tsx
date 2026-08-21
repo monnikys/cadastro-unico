@@ -105,14 +105,15 @@ function VisaoGeral() {
       amostra,
       dependentes: dependentesDoFiltro,
       idadeMedia: idadeMediaFiltrada,
-      patrocinadores: centrusFuncAtivo
-        ? 1
-        : new Set(planosVisiveis.map((plano) => plano.patrocinador)).size,
+      patrocinadores:
+        centrusFuncAtivo || planoAtivo
+          ? 1
+          : new Set(planos.map((plano) => plano.patrocinador)).size,
       porEstado: calcularPorEstado(amostra),
       porGenero: calcularPorGenero(amostra),
       faixaEtaria: calcularFaixaEtaria(amostra),
     };
-  }, [centrusFuncAtivo, planoAtivo, planoSelecionado, planosVisiveis]);
+  }, [centrusFuncAtivo, planoAtivo, planoSelecionado]);
 
   const participantesFiltrados = filtro.amostra.length;
   const proporcao = participantesFiltrados / totalParticipantes;
@@ -144,7 +145,11 @@ function VisaoGeral() {
     [evolucaoBase, proporcao, anoSelecionado],
   );
 
-  const contextoPlano = planoAtivo ? planoAtivo.sigla : centrusFuncAtivo ? CENTRUSFUNC : "todos os planos";
+  const contextoPlano = planoAtivo
+    ? planoAtivo.sigla
+    : centrusFuncAtivo
+      ? CENTRUSFUNC
+      : "todos os planos";
   const contextoAno =
     anoSelecionado === "todos"
       ? `${anosDisponiveis[0]}–${anosDisponiveis[anosDisponiveis.length - 1]}`

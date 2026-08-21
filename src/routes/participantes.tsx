@@ -189,8 +189,8 @@ function ParticipantesPage() {
         </div>
         {lista.length > LIMITE_RESULTADOS ? (
           <p className="mt-2 px-1 text-xs text-muted-foreground">
-            Mostrando {LIMITE_RESULTADOS} de {lista.length} participantes. Refine a busca ou o
-            plano para ver outros registros.
+            Mostrando {LIMITE_RESULTADOS} de {lista.length} participantes. Refine a busca ou o plano
+            para ver outros registros.
           </p>
         ) : null}
       </Panel>

@@ -52,11 +52,7 @@ function PlanosPage() {
     >
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Planos cadastrados" value={String(planos.length)} icon={Layers} />
-        <StatCard
-          label="Patrocinadores"
-          value={String(patrocinadores.length)}
-          icon={Building2}
-        />
+        <StatCard label="Patrocinadores" value={String(patrocinadores.length)} icon={Building2} />
         <StatCard
           label="Participantes vinculados"
           value={nf.format(totalParticipantes)}

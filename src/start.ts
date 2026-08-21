@@ -17,9 +17,10 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// Start installs this automatically when src/start.ts is absent; defining the
-// file opts out, so re-add it explicitly to keep server functions protected
-// from cross-site requests.
+// O Start instala isto automaticamente quando src/start.ts não existe; ao
+// definir o arquivo, isso é desativado, então é preciso adicionar de volta
+// explicitamente para manter as server functions protegidas contra
+// requisições entre sites.
 const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });

@@ -10,7 +10,10 @@ export const getRouter = () => {
     routeTree,
     context: { queryClient },
     // Mantém os links internos dentro de /cadastro-unico/ no GitHub Pages.
-    basepath: basepath || undefined,
+    // A chave só é incluída quando há um prefixo real: com
+    // exactOptionalPropertyTypes, passar `basepath: undefined` explicitamente
+    // não é a mesma coisa que omitir a chave.
+    ...(basepath ? { basepath } : {}),
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
   });

@@ -485,8 +485,28 @@ function gerarDependentes(titulares: Participante[]): Dependente[] {
   return lista;
 }
 
+// Caso proposital: um titular (que já tem plano próprio) também aparece
+// como dependente de outro titular — por exemplo, um cônjuge que tem seu
+// próprio plano mas também consta como dependente no plano do parceiro.
+function criarCasoTitularTambemDependente(
+  listaParticipantes: Participante[],
+  listaDependentes: Dependente[],
+): void {
+  const dependenteAlvo = listaDependentes.find((d) => d.parentesco === "Cônjuge");
+  if (!dependenteAlvo) return;
+  const participanteAlvo = listaParticipantes.find(
+    (p) => p.cpf !== dependenteAlvo.cpfTitular && p.nome !== dependenteAlvo.titular,
+  );
+  if (!participanteAlvo) return;
+
+  dependenteAlvo.nome = participanteAlvo.nome;
+  dependenteAlvo.cpf = participanteAlvo.cpf;
+  dependenteAlvo.idade = participanteAlvo.idade;
+}
+
 export const participantes: Participante[] = gerarParticipantes();
 export const dependentes: Dependente[] = gerarDependentes(participantes);
+criarCasoTitularTambemDependente(participantes, dependentes);
 
 const PLANOS_META: Array<Omit<Plano, "participantes">> = [
   {

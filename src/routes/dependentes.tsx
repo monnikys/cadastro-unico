@@ -3,7 +3,16 @@ import { useMemo, useState } from "react";
 import { Baby, HeartHandshake, Search, Users } from "lucide-react";
 import { Shell } from "@/components/dashboard/Shell";
 import { Panel, StatCard } from "@/components/dashboard/StatCard";
-import { dependentes, nf, planos, totalDependentes } from "@/data/cadastro";
+import {
+  CENTRUSFUNC,
+  colaboradoresCentrus,
+  dependentes,
+  nf,
+  participantes,
+  planos,
+  totalDependentes,
+} from "@/data/cadastro";
+import type { Participante } from "@/data/cadastro";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,6 +43,24 @@ export const Route = createFileRoute("/dependentes")({
   component: DependentesPage,
 });
 
+// CPFs dos titulares que são colaboradores ativos da Centrus, para
+// identificar quais dependentes pertencem a eles (opção CENTRUSFUNC).
+const cpfsColaboradoresCentrus = new Set(colaboradoresCentrus.map((p) => p.cpf));
+
+// Participantes (titulares) por CPF, para identificar quando um dependente
+// também tem cadastro próprio como participante e em qual(is) plano(s).
+const participantesPorCpf = new Map(participantes.map((p) => [p.cpf, p]));
+const totalDependentesCentrus = dependentes.filter((d) =>
+  cpfsColaboradoresCentrus.has(d.cpfTitular),
+).length;
+
+function labelParticipanteTambem(participante: Participante): string {
+  const siglas = [...new Set(participante.planos.map((vinculo) => vinculo.sigla))];
+  return siglas.length > 1
+    ? `Participante dos planos ${siglas.join(", ")}`
+    : `Participante do plano ${siglas[0]}`;
+}
+
 function DependentesPage() {
   const [busca, setBusca] = useState("");
   const [planoSelecionado, setPlanoSelecionado] = useState("todos");
@@ -47,7 +74,10 @@ function DependentesPage() {
           [d.nome, d.cpf, d.titular, d.cpfTitular, ...d.planos].some((v) =>
             v.toLowerCase().includes(q),
           )) &&
-        (planoSelecionado === "todos" || d.planos.includes(planoSelecionado)),
+        (planoSelecionado === "todos" ||
+          (planoSelecionado === CENTRUSFUNC
+            ? cpfsColaboradoresCentrus.has(d.cpfTitular)
+            : d.planos.includes(planoSelecionado))),
     );
   }, [busca, planoSelecionado]);
 
@@ -62,7 +92,7 @@ function DependentesPage() {
       title="Dependentes"
       subtitle="Vínculos familiares registrados no cadastro, com titular, parentesco e plano de origem."
     >
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Dependentes"
           value={nf.format(totalDependentes)}
@@ -81,11 +111,17 @@ function DependentesPage() {
           hint="Da amostra filtrada"
           icon={Users}
         />
+        <StatCard
+          label="Dependentes de colaboradores Centrus"
+          value={nf.format(totalDependentesCentrus)}
+          hint="Vinculados a titulares CENTRUSFUNC"
+          icon={Users}
+        />
       </div>
 
       <Panel
         title="Buscar dependente"
-        description="Pesquise por nome, CPF do dependente, titular ou plano. Selecione um plano para filtrar a lista."
+        description="Pesquise por nome, CPF do dependente, titular ou plano. Selecione um plano (ou CENTRUSFUNC) para filtrar a lista."
         className="mt-4"
       >
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_220px]">
@@ -110,6 +146,9 @@ function DependentesPage() {
                 {plano.sigla} — {plano.descricao}
               </option>
             ))}
+            <option value={CENTRUSFUNC}>
+              CENTRUSFUNC — Dependentes de colaboradores da Centrus
+            </option>
           </select>
         </div>
 
@@ -129,18 +168,37 @@ function DependentesPage() {
             <TableBody>
               {resultados.map((d) => {
                 const planosExibidos =
-                  planoSelecionado === "todos"
+                  planoSelecionado === "todos" || planoSelecionado === CENTRUSFUNC
                     ? d.planos.slice(0, 1)
                     : d.planos.filter((plano) => plano === planoSelecionado);
                 const planosAdicionais = d.planos.length - planosExibidos.length;
+                const tambemParticipante = participantesPorCpf.get(d.cpf);
 
                 return (
                   <TableRow key={d.cpf}>
-                    <TableCell className="font-medium">{d.nome}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <span>{d.nome}</span>
+                        {tambemParticipante ? (
+                          <Badge className="border-transparent bg-accent/15 text-[10px] text-accent">
+                            {labelParticipanteTambem(tambemParticipante)}
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </TableCell>
                     <TableCell className="tabular-nums text-muted-foreground">{d.cpf}</TableCell>
                     <TableCell>{d.parentesco}</TableCell>
                     <TableCell className="tabular-nums">{d.idade}</TableCell>
-                    <TableCell>{d.titular}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <span>{d.titular}</span>
+                        {cpfsColaboradoresCentrus.has(d.cpfTitular) ? (
+                          <Badge className="border-transparent bg-success/15 text-[10px] text-success">
+                            Centrus
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </TableCell>
                     <TableCell className="tabular-nums text-muted-foreground">
                       {d.cpfTitular}
                     </TableCell>

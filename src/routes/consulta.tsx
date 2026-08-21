@@ -16,6 +16,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+// Participantes (titulares) por CPF, para identificar quando um dependente
+// vinculado também tem cadastro próprio como participante e em qual(is)
+// plano(s).
+const participantesPorCpf = new Map(participantes.map((p) => [p.cpf, p]));
+
+function labelParticipanteTambem(participante: Participante): string {
+  const siglas = [...new Set(participante.planos.map((vinculo) => vinculo.sigla))];
+  return siglas.length > 1
+    ? `Participante dos planos ${siglas.join(", ")}`
+    : `Participante do plano ${siglas[0]}`;
+}
+
 export const Route = createFileRoute("/consulta")({
   head: () => ({
     meta: [
@@ -293,16 +305,29 @@ function ConsultaPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {deps.map((d) => (
-                      <TableRow key={d.cpf}>
-                        <TableCell className="font-medium">{d.nome}</TableCell>
-                        <TableCell className="tabular-nums text-muted-foreground">
-                          {d.cpf}
-                        </TableCell>
-                        <TableCell>{d.parentesco}</TableCell>
-                        <TableCell className="text-right tabular-nums">{d.idade}</TableCell>
-                      </TableRow>
-                    ))}
+                    {deps.map((d) => {
+                      const tambemParticipante = participantesPorCpf.get(d.cpf);
+
+                      return (
+                        <TableRow key={d.cpf}>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <span>{d.nome}</span>
+                              {tambemParticipante ? (
+                                <Badge className="border-transparent bg-accent/15 text-[10px] text-accent">
+                                  {labelParticipanteTambem(tambemParticipante)}
+                                </Badge>
+                              ) : null}
+                            </div>
+                          </TableCell>
+                          <TableCell className="tabular-nums text-muted-foreground">
+                            {d.cpf}
+                          </TableCell>
+                          <TableCell>{d.parentesco}</TableCell>
+                          <TableCell className="text-right tabular-nums">{d.idade}</TableCell>
+                        </TableRow>
+                      );
+                    })}
                     {deps.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">

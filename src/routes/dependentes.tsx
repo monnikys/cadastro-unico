@@ -44,15 +44,18 @@ function DependentesPage() {
     return dependentes.filter(
       (d) =>
         (!q ||
-          [d.nome, d.cpf, d.titular, d.cpfTitular, d.plano].some((v) =>
+          [d.nome, d.cpf, d.titular, d.cpfTitular, ...d.planos].some((v) =>
             v.toLowerCase().includes(q),
           )) &&
-        (planoSelecionado === "todos" || d.plano === planoSelecionado),
+        (planoSelecionado === "todos" || d.planos.includes(planoSelecionado)),
     );
   }, [busca, planoSelecionado]);
 
-  const conjuges = dependentes.filter((d) => d.parentesco === "Cônjuge").length;
-  const menores = dependentes.filter((d) => d.idade < 21).length;
+  const conjuges = lista.filter((d) => d.parentesco === "Cônjuge").length;
+  const menores = lista.filter((d) => d.idade < 21).length;
+
+  const LIMITE_RESULTADOS = 100;
+  const resultados = lista.slice(0, LIMITE_RESULTADOS);
 
   return (
     <Shell
@@ -68,14 +71,14 @@ function DependentesPage() {
         />
         <StatCard
           label="Cônjuges"
-          value={`${Math.round((conjuges / dependentes.length) * 100)}%`}
-          hint="Da amostra exibida"
+          value={lista.length ? `${Math.round((conjuges / lista.length) * 100)}%` : "—"}
+          hint="Da amostra filtrada"
           icon={HeartHandshake}
         />
         <StatCard
           label="Menores de 21"
-          value={`${Math.round((menores / dependentes.length) * 100)}%`}
-          hint="Da amostra exibida"
+          value={lista.length ? `${Math.round((menores / lista.length) * 100)}%` : "—"}
+          hint="Da amostra filtrada"
           icon={Users}
         />
       </div>
@@ -120,25 +123,44 @@ function DependentesPage() {
                 <TableHead>Idade</TableHead>
                 <TableHead>Titular</TableHead>
                 <TableHead>CPF do titular</TableHead>
-                <TableHead>Plano</TableHead>
+                <TableHead>Planos</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lista.map((d) => (
-                <TableRow key={d.cpf}>
-                  <TableCell className="font-medium">{d.nome}</TableCell>
-                  <TableCell className="tabular-nums text-muted-foreground">{d.cpf}</TableCell>
-                  <TableCell>{d.parentesco}</TableCell>
-                  <TableCell className="tabular-nums">{d.idade}</TableCell>
-                  <TableCell>{d.titular}</TableCell>
-                  <TableCell className="tabular-nums text-muted-foreground">
-                    {d.cpfTitular}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{d.plano}</Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {resultados.map((d) => {
+                const planosExibidos =
+                  planoSelecionado === "todos"
+                    ? d.planos.slice(0, 1)
+                    : d.planos.filter((plano) => plano === planoSelecionado);
+                const planosAdicionais = d.planos.length - planosExibidos.length;
+
+                return (
+                  <TableRow key={d.cpf}>
+                    <TableCell className="font-medium">{d.nome}</TableCell>
+                    <TableCell className="tabular-nums text-muted-foreground">{d.cpf}</TableCell>
+                    <TableCell>{d.parentesco}</TableCell>
+                    <TableCell className="tabular-nums">{d.idade}</TableCell>
+                    <TableCell>{d.titular}</TableCell>
+                    <TableCell className="tabular-nums text-muted-foreground">
+                      {d.cpfTitular}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {planosExibidos.map((plano) => (
+                          <Badge key={plano} variant="secondary">
+                            {plano}
+                          </Badge>
+                        ))}
+                        {planosAdicionais > 0 ? (
+                          <Badge variant="outline">
+                            +{planosAdicionais} {planosAdicionais === 1 ? "plano" : "planos"}
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
               {lista.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
@@ -149,6 +171,12 @@ function DependentesPage() {
             </TableBody>
           </Table>
         </div>
+        {lista.length > LIMITE_RESULTADOS ? (
+          <p className="mt-2 px-1 text-xs text-muted-foreground">
+            Mostrando {LIMITE_RESULTADOS} de {lista.length} dependentes. Refine a busca ou o plano
+            para ver outros registros.
+          </p>
+        ) : null}
       </Panel>
     </Shell>
   );

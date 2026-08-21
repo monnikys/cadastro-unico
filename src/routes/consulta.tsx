@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Mail, MapPin, Phone, Search, IdCard } from "lucide-react";
 import { Shell } from "@/components/dashboard/Shell";
 import { Panel } from "@/components/dashboard/StatCard";
-import { dependentes, participantes, planos } from "@/data/cadastro";
+import { CENTRUSFUNC, dependentes, participantes, planos } from "@/data/cadastro";
 import type { Participante } from "@/data/cadastro";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +50,10 @@ function ConsultaPage() {
     return participantes.filter((p) => {
       const combinaBusca = !q || p.nome.toLowerCase().includes(q) || p.cpf.includes(q);
       const combinaPlano =
-        planoSelecionado === "todos" || p.planos.some((vinculo) => vinculo.sigla === planoSelecionado);
+        planoSelecionado === "todos" ||
+        (planoSelecionado === CENTRUSFUNC
+          ? p.colaboradorCentrus === true
+          : p.planos.some((vinculo) => vinculo.sigla === planoSelecionado));
       return combinaBusca && combinaPlano;
     });
   }, [busca, planoSelecionado]);
@@ -102,6 +105,7 @@ function ConsultaPage() {
                 {plano.sigla}
               </option>
             ))}
+            <option value={CENTRUSFUNC}>CENTRUSFUNC — Colaboradores da Centrus</option>
           </select>
           <ul className="mt-3 space-y-1.5">
             {resultados.map((p) => (
@@ -123,7 +127,7 @@ function ConsultaPage() {
                   <span className="mt-1 flex flex-wrap gap-1">
                     {p.planos
                       .filter((vinculo, indice) =>
-                        planoSelecionado === "todos"
+                        planoSelecionado === "todos" || planoSelecionado === CENTRUSFUNC
                           ? indice === 0
                           : vinculo.sigla === planoSelecionado,
                       )
@@ -140,6 +144,18 @@ function ConsultaPage() {
                           {vinculo.sigla}
                         </Badge>
                       ))}
+                    {p.colaboradorCentrus ? (
+                      <Badge
+                        variant="secondary"
+                        className={
+                          p.cpf === pessoa?.cpf
+                            ? "bg-primary-foreground/15 text-primary-foreground"
+                            : "bg-success/15 text-success"
+                        }
+                      >
+                        Centrus
+                      </Badge>
+                    ) : null}
                     {p.planos.length > 1 ? (
                       <Badge
                         variant="outline"
@@ -184,13 +200,28 @@ function ConsultaPage() {
                       <IdCard className="size-4" /> {pessoa.cpf}
                     </p>
                   </div>
-                  <Badge variant="secondary">
-                    {pessoa.planos.length}{" "}
-                    {pessoa.planos.length === 1 ? "plano vinculado" : "planos vinculados"}
-                  </Badge>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="secondary">
+                      {pessoa.planos.length}{" "}
+                      {pessoa.planos.length === 1 ? "plano vinculado" : "planos vinculados"}
+                    </Badge>
+                    {pessoa.colaboradorCentrus ? (
+                      <Badge className="border-transparent bg-success/15 text-success">
+                        Colaborador ativo da Centrus
+                      </Badge>
+                    ) : null}
+                  </div>
                 </div>
 
                 <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <Field
+                    label="Vínculo com a Centrus"
+                    value={
+                      pessoa.colaboradorCentrus
+                        ? "Funcionário ativo da Centrus"
+                        : "Não vinculado como funcionário"
+                    }
+                  />
                   <Field
                     label="Planos"
                     value={planosDaPessoa

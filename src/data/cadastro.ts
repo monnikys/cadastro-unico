@@ -1,4 +1,13 @@
 // Dados de demonstração do painel Cadastro Único (estrutura baseada no modelo original)
+//
+// A base de participantes/dependentes é gerada por um gerador
+// pseudo-aleatório com semente fixa: os mesmos dados aparecem em toda
+// carga da página (servidor e cliente), simulando uma base realista em
+// escala. Todos os totais agregados (planos, porEstado, faixaEtaria,
+// porGenero, evolução, colaboradores Centrus etc.) são derivados desta
+// mesma base — nunca números "soltos" — para que as abas de
+// Participantes, Dependentes e Visão Geral fiquem sempre consistentes
+// entre si.
 
 export type Plano = {
   sigla: string;
@@ -8,108 +17,6 @@ export type Plano = {
   cnpj: string;
   situacao: "Ativo" | "Em saldamento" | "Encerrado";
 };
-
-export const planos: Plano[] = [
-  {
-    sigla: "PBB",
-    descricao: "PLANO BASICO DE BENEFICIOS",
-    participantes: 942,
-    patrocinador: "Associação Nacional dos Servidores",
-    cnpj: "03.658.417/0001-72",
-    situacao: "Ativo",
-  },
-  {
-    sigla: "PBDC",
-    descricao: "PLANO DE BENEFICIO DEFINIDO CENTRUS",
-    participantes: 4820,
-    patrocinador: "Banco Central do Brasil",
-    cnpj: "00.038.166/0001-05",
-    situacao: "Em saldamento",
-  },
-  {
-    sigla: "PCD",
-    descricao: "PLANO DE CONTRIBUICAO DEFINIDA",
-    participantes: 615,
-    patrocinador: "Cooperativa Agroindustrial Central",
-    cnpj: "12.774.508/0001-19",
-    situacao: "Encerrado",
-  },
-  {
-    sigla: "CENTRUSPREV+",
-    descricao: "PLANO INSTITUIDO CENTRUSPREV+",
-    participantes: 3164,
-    patrocinador: "Centrus - Fundação Banco Central",
-    cnpj: "00.493.019/0001-40",
-    situacao: "Ativo",
-  },
-];
-
-export const totalParticipantes = planos.reduce((s, p) => s + p.participantes, 0);
-export const idadeMedia = 54.7;
-export const totalDependentes = 6431;
-export const totalPatrocinadores = 4;
-
-export const porEstado = [
-  { uf: "DF", participantes: 5210 },
-  { uf: "SP", participantes: 1840 },
-  { uf: "RJ", participantes: 1305 },
-  { uf: "MG", participantes: 927 },
-  { uf: "RS", participantes: 486 },
-  { uf: "PR", participantes: 421 },
-  { uf: "BA", participantes: 338 },
-  { uf: "PE", participantes: 217 },
-  { uf: "CE", participantes: 104 },
-  { uf: "Outros", participantes: 80 },
-];
-
-export const faixaEtaria = [
-  { faixa: "Até 30 anos", quantidade: 412 },
-  { faixa: "31 a 40 anos", quantidade: 1136 },
-  { faixa: "41 a 50 anos", quantidade: 2248 },
-  { faixa: "51 a 60 anos", quantidade: 3389 },
-  { faixa: "61 a 70 anos", quantidade: 2274 },
-  { faixa: "Acima de 70", quantidade: 1369 },
-];
-
-export const porGenero = [
-  { genero: "Masculino", quantidade: 6472 },
-  { genero: "Feminino", quantidade: 4356 },
-];
-
-export const evolucao = [
-  { mes: "Jan", ano: 2024, ativos: 9180, dependentes: 5210 },
-  { mes: "Fev", ano: 2024, ativos: 9233, dependentes: 5251 },
-  { mes: "Mar", ano: 2024, ativos: 9289, dependentes: 5287 },
-  { mes: "Abr", ano: 2024, ativos: 9336, dependentes: 5326 },
-  { mes: "Mai", ano: 2024, ativos: 9390, dependentes: 5358 },
-  { mes: "Jun", ano: 2024, ativos: 9435, dependentes: 5401 },
-  { mes: "Jul", ano: 2024, ativos: 9491, dependentes: 5441 },
-  { mes: "Ago", ano: 2024, ativos: 9545, dependentes: 5470 },
-  { mes: "Set", ano: 2024, ativos: 9589, dependentes: 5513 },
-  { mes: "Out", ano: 2024, ativos: 9644, dependentes: 5545 },
-  { mes: "Nov", ano: 2024, ativos: 9692, dependentes: 5589 },
-  { mes: "Dez", ano: 2024, ativos: 9755, dependentes: 5629 },
-  { mes: "Jan", ano: 2025, ativos: 9795, dependentes: 5665 },
-  { mes: "Fev", ano: 2025, ativos: 9853, dependentes: 5701 },
-  { mes: "Mar", ano: 2025, ativos: 9908, dependentes: 5741 },
-  { mes: "Abr", ano: 2025, ativos: 9960, dependentes: 5771 },
-  { mes: "Mai", ano: 2025, ativos: 10011, dependentes: 5807 },
-  { mes: "Jun", ano: 2025, ativos: 10062, dependentes: 5845 },
-  { mes: "Jul", ano: 2025, ativos: 10105, dependentes: 5882 },
-  { mes: "Ago", ano: 2025, ativos: 10160, dependentes: 5923 },
-  { mes: "Set", ano: 2025, ativos: 10218, dependentes: 5957 },
-  { mes: "Out", ano: 2025, ativos: 10273, dependentes: 6002 },
-  { mes: "Nov", ano: 2025, ativos: 10317, dependentes: 6039 },
-  { mes: "Dez", ano: 2025, ativos: 10370, dependentes: 6075 },
-  { mes: "Jan", ano: 2026, ativos: 10420, dependentes: 6120 },
-  { mes: "Fev", ano: 2026, ativos: 10465, dependentes: 6178 },
-  { mes: "Mar", ano: 2026, ativos: 10521, dependentes: 6215 },
-  { mes: "Abr", ano: 2026, ativos: 10590, dependentes: 6260 },
-  { mes: "Mai", ano: 2026, ativos: 10664, dependentes: 6304 },
-  { mes: "Jun", ano: 2026, ativos: 10712, dependentes: 6351 },
-  { mes: "Jul", ano: 2026, ativos: 10778, dependentes: 6392 },
-  { mes: "Ago", ano: 2026, ativos: 10828, dependentes: 6431 },
-];
 
 export type VinculoPlano = {
   sigla: string;
@@ -126,398 +33,10 @@ export type Participante = {
   sexo: "M" | "F";
   email: string;
   telefone: string;
+  // Presente e true apenas quando o participante também é colaborador
+  // ativo do quadro de funcionários da Centrus.
+  colaboradorCentrus?: boolean;
 };
-
-export const participantes: Participante[] = [
-  {
-    cpf: "184.902.371-05",
-    nome: "Ana Carolina Peixoto",
-    // Exemplo: um único cadastro pode estar vinculado a mais de um plano.
-    planos: [
-      { sigla: "CENTRUSPREV+", inscricao: "12/03/2009", situacao: "Ativo" },
-      { sigla: "PBB", inscricao: "18/06/2016", situacao: "Ativo" },
-      { sigla: "PCD", inscricao: "09/02/2021", situacao: "Ativo" },
-    ],
-    uf: "DF",
-    idade: 47,
-    sexo: "F",
-    email: "ana.peixoto@exemplo.com.br",
-    telefone: "(61) 99812-4477",
-  },
-  {
-    cpf: "225.771.008-44",
-    nome: "Roberto Nunes de Almeida",
-    planos: [{ sigla: "PBDC", inscricao: "05/07/1988", situacao: "Assistido" }],
-    uf: "DF",
-    idade: 68,
-    sexo: "M",
-    email: "roberto.almeida@exemplo.com.br",
-    telefone: "(61) 98443-1120",
-  },
-  {
-    cpf: "402.117.633-90",
-    nome: "Jorge Luiz Andrade",
-    planos: [{ sigla: "PBB", inscricao: "23/01/2001", situacao: "Autopatrocinado" }],
-    uf: "RJ",
-    idade: 55,
-    sexo: "M",
-    email: "jorge.andrade@exemplo.com.br",
-    telefone: "(21) 98801-3390",
-  },
-  {
-    cpf: "556.903.114-28",
-    nome: "Beatriz Furtado Lima",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "14/11/1995", situacao: "Assistido" }],
-    uf: "MG",
-    idade: 61,
-    sexo: "F",
-    email: "beatriz.lima@exemplo.com.br",
-    telefone: "(31) 99633-2214",
-  },
-  {
-    cpf: "671.220.845-13",
-    nome: "Fernando Cabral Ribeiro",
-    planos: [{ sigla: "PBDC", inscricao: "02/02/1984", situacao: "Assistido" }],
-    uf: "RS",
-    idade: 72,
-    sexo: "M",
-    email: "fernando.ribeiro@exemplo.com.br",
-    telefone: "(51) 99887-4402",
-  },
-  {
-    cpf: "093.518.274-60",
-    nome: "Carla Mendes de Souza",
-    planos: [{ sigla: "PBB", inscricao: "08/05/2012", situacao: "Ativo" }],
-    uf: "DF",
-    idade: 44,
-    sexo: "F",
-    email: "carla.souza@exemplo.com.br",
-    telefone: "(61) 99741-2680",
-  },
-  {
-    cpf: "127.684.350-19",
-    nome: "Paulo Henrique Moraes",
-    planos: [{ sigla: "PBDC", inscricao: "17/10/1991", situacao: "Assistido" }],
-    uf: "SP",
-    idade: 66,
-    sexo: "M",
-    email: "paulo.moraes@exemplo.com.br",
-    telefone: "(11) 99358-1742",
-  },
-  {
-    cpf: "158.239.706-84",
-    nome: "Juliana Campos Freire",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "21/08/2018", situacao: "Ativo" }],
-    uf: "MG",
-    idade: 36,
-    sexo: "F",
-    email: "juliana.freire@exemplo.com.br",
-    telefone: "(31) 99147-6358",
-  },
-  {
-    cpf: "206.971.485-32",
-    nome: "Ricardo Tavares Lopes",
-    planos: [{ sigla: "PBDC", inscricao: "14/04/1994", situacao: "Assistido" }],
-    uf: "RJ",
-    idade: 63,
-    sexo: "M",
-    email: "ricardo.lopes@exemplo.com.br",
-    telefone: "(21) 99520-3814",
-  },
-  {
-    cpf: "318.750.264-09",
-    nome: "Eduardo Nascimento Barros",
-    planos: [{ sigla: "PCD", inscricao: "25/09/2010", situacao: "Autopatrocinado" }],
-    uf: "RS",
-    idade: 52,
-    sexo: "M",
-    email: "eduardo.barros@exemplo.com.br",
-    telefone: "(51) 99462-8157",
-  },
-  {
-    cpf: "347.186.529-73",
-    nome: "Renata Duarte Cavalcanti",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "11/02/2020", situacao: "Ativo" }],
-    uf: "PE",
-    idade: 33,
-    sexo: "F",
-    email: "renata.cavalcanti@exemplo.com.br",
-    telefone: "(81) 99681-4325",
-  },
-  {
-    cpf: "386.294.715-48",
-    nome: "Marcelo Vieira Sampaio",
-    planos: [{ sigla: "PBB", inscricao: "19/07/2005", situacao: "Ativo" }],
-    uf: "BA",
-    idade: 49,
-    sexo: "M",
-    email: "marcelo.sampaio@exemplo.com.br",
-    telefone: "(71) 99136-5290",
-  },
-  {
-    cpf: "429.805.176-26",
-    nome: "Larissa Rocha Albuquerque",
-    planos: [
-      { sigla: "CENTRUSPREV+", inscricao: "16/03/2017", situacao: "Ativo" },
-      { sigla: "PCD", inscricao: "08/11/2021", situacao: "Ativo" },
-    ],
-    uf: "CE",
-    idade: 38,
-    sexo: "F",
-    email: "larissa.albuquerque@exemplo.com.br",
-    telefone: "(85) 99705-2486",
-  },
-  {
-    cpf: "463.179.280-95",
-    nome: "André Luiz Pinheiro",
-    planos: [{ sigla: "PBDC", inscricao: "28/01/1987", situacao: "Assistido" }],
-    uf: "DF",
-    idade: 70,
-    sexo: "M",
-    email: "andre.pinheiro@exemplo.com.br",
-    telefone: "(61) 98417-9503",
-  },
-  {
-    cpf: "548.913.762-41",
-    nome: "Gustavo Pires Monteiro",
-    planos: [{ sigla: "PCD", inscricao: "04/10/2013", situacao: "Ativo" }],
-    uf: "GO",
-    idade: 46,
-    sexo: "M",
-    email: "gustavo.monteiro@exemplo.com.br",
-    telefone: "(62) 99348-6701",
-  },
-  {
-    cpf: "612.478.930-64",
-    nome: "Vanessa Ribeiro Costa",
-    planos: [{ sigla: "PBB", inscricao: "15/04/2007", situacao: "Autopatrocinado" }],
-    uf: "ES",
-    idade: 54,
-    sexo: "F",
-    email: "vanessa.costa@exemplo.com.br",
-    telefone: "(27) 99816-4372",
-  },
-  {
-    cpf: "658.042.197-30",
-    nome: "Leonardo Farias Queiroz",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "09/09/2015", situacao: "Ativo" }],
-    uf: "SC",
-    idade: 43,
-    sexo: "M",
-    email: "leonardo.queiroz@exemplo.com.br",
-    telefone: "(48) 99642-5809",
-  },
-  {
-    cpf: "703.156.824-97",
-    nome: "Mônica Teixeira Ramos",
-    planos: [{ sigla: "PBDC", inscricao: "22/06/1990", situacao: "Assistido" }],
-    uf: "RJ",
-    idade: 67,
-    sexo: "F",
-    email: "monica.ramos@exemplo.com.br",
-    telefone: "(21) 98735-6194",
-  },
-  {
-    cpf: "746.289.503-16",
-    nome: "Thiago César Brito",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "07/08/2019", situacao: "Ativo" }],
-    uf: "DF",
-    idade: 45,
-    sexo: "M",
-    email: "thiago.brito@exemplo.com.br",
-    telefone: "(61) 99207-8541",
-  },
-  {
-    cpf: "805.617.294-38",
-    nome: "Camila Oliveira Leal",
-    planos: [{ sigla: "PCD", inscricao: "13/05/2022", situacao: "Ativo" }],
-    uf: "MA",
-    idade: 29,
-    sexo: "F",
-    email: "camila.leal@exemplo.com.br",
-    telefone: "(98) 99654-3708",
-  },
-  {
-    cpf: "849.360.725-51",
-    nome: "Sérgio Augusto Lima",
-    planos: [{ sigla: "PBB", inscricao: "27/11/1999", situacao: "Assistido" }],
-    uf: "MG",
-    idade: 62,
-    sexo: "M",
-    email: "sergio.lima@exemplo.com.br",
-    telefone: "(31) 98847-1026",
-  },
-  {
-    cpf: "181.960.013-39",
-    nome: "Bruno Rezende Pereira",
-    planos: [{ sigla: "PBB", inscricao: "23/04/2020", situacao: "Autopatrocinado" }],
-    uf: "PE",
-    idade: 36,
-    sexo: "M",
-    email: "bruno.pereira@exemplo.com.br",
-    telefone: "(81) 94611-8359",
-  },
-  {
-    cpf: "423.511.615-54",
-    nome: "Flavia Alves Kowalski",
-    planos: [{ sigla: "PBB", inscricao: "04/09/2014", situacao: "Autopatrocinado" }],
-    uf: "AM",
-    idade: 49,
-    sexo: "F",
-    email: "flavia.kowalski@exemplo.com.br",
-    telefone: "(92) 92291-5803",
-  },
-  {
-    cpf: "341.316.475-30",
-    nome: "Tatiana Machado Esteves",
-    planos: [{ sigla: "PBDC", inscricao: "22/12/2002", situacao: "Assistido" }],
-    uf: "SP",
-    idade: 70,
-    sexo: "F",
-    email: "tatiana.esteves@exemplo.com.br",
-    telefone: "(11) 93803-9751",
-  },
-  {
-    cpf: "696.532.871-16",
-    nome: "Marcos Ibrahim Pereira",
-    planos: [{ sigla: "PBDC", inscricao: "14/11/1995", situacao: "Assistido" }],
-    uf: "CE",
-    idade: 65,
-    sexo: "M",
-    email: "marcos.pereira@exemplo.com.br",
-    telefone: "(85) 97304-7252",
-  },
-  {
-    cpf: "184.514.627-10",
-    nome: "Regina Quintana Lobato",
-    planos: [{ sigla: "PCD", inscricao: "28/02/2017", situacao: "Autopatrocinado" }, { sigla: "PBDC", inscricao: "07/10/2017", situacao: "Assistido" }],
-    uf: "DF",
-    idade: 71,
-    sexo: "F",
-    email: "regina.lobato@exemplo.com.br",
-    telefone: "(61) 97126-3646",
-  },
-  {
-    cpf: "543.039.117-18",
-    nome: "Cesar Uchoa Holanda",
-    planos: [{ sigla: "PBDC", inscricao: "28/09/2001", situacao: "Assistido" }],
-    uf: "DF",
-    idade: 35,
-    sexo: "M",
-    email: "cesar.holanda@exemplo.com.br",
-    telefone: "(61) 94470-9835",
-  },
-  {
-    cpf: "871.331.509-80",
-    nome: "Fabio Teles Bezerra",
-    planos: [{ sigla: "PBDC", inscricao: "23/02/1985", situacao: "Assistido" }],
-    uf: "SC",
-    idade: 56,
-    sexo: "M",
-    email: "fabio.bezerra@exemplo.com.br",
-    telefone: "(48) 94750-2104",
-  },
-  {
-    cpf: "738.299.737-62",
-    nome: "Kleber Vargas Esteves",
-    planos: [{ sigla: "PBB", inscricao: "14/06/2012", situacao: "Autopatrocinado" }],
-    uf: "PE",
-    idade: 45,
-    sexo: "M",
-    email: "kleber.esteves@exemplo.com.br",
-    telefone: "(81) 98651-1887",
-  },
-  {
-    cpf: "338.726.247-41",
-    nome: "Diego Bezerra Vargas",
-    planos: [{ sigla: "PBB", inscricao: "04/09/2013", situacao: "Ativo" }],
-    uf: "MG",
-    idade: 43,
-    sexo: "M",
-    email: "diego.vargas@exemplo.com.br",
-    telefone: "(31) 99856-1241",
-  },
-  {
-    cpf: "788.208.121-86",
-    nome: "Gilberto Uchoa Dantas",
-    planos: [{ sigla: "PBDC", inscricao: "19/02/2010", situacao: "Assistido" }],
-    uf: "SP",
-    idade: 65,
-    sexo: "M",
-    email: "gilberto.dantas@exemplo.com.br",
-    telefone: "(11) 91651-2343",
-  },
-  {
-    cpf: "427.849.808-48",
-    nome: "Mauricio Xavier Esteves",
-    planos: [{ sigla: "PBB", inscricao: "04/02/2001", situacao: "Ativo" }, { sigla: "PBDC", inscricao: "20/05/2002", situacao: "Assistido" }],
-    uf: "PE",
-    idade: 51,
-    sexo: "M",
-    email: "mauricio.esteves@exemplo.com.br",
-    telefone: "(81) 96617-4335",
-  },
-  {
-    cpf: "045.053.315-81",
-    nome: "Tatiana Lobato Jardim",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "26/03/2000", situacao: "Ativo" }, { sigla: "PBDC", inscricao: "06/01/2011", situacao: "Assistido" }],
-    uf: "AM",
-    idade: 36,
-    sexo: "F",
-    email: "tatiana.jardim@exemplo.com.br",
-    telefone: "(92) 97745-5065",
-  },
-  {
-    cpf: "337.543.303-61",
-    nome: "Fernanda Gonçalves Zanetti",
-    planos: [{ sigla: "PBB", inscricao: "21/06/2002", situacao: "Autopatrocinado" }],
-    uf: "SP",
-    idade: 58,
-    sexo: "F",
-    email: "fernanda.zanetti@exemplo.com.br",
-    telefone: "(11) 99785-6425",
-  },
-  {
-    cpf: "196.556.981-59",
-    nome: "Gabriel Quintana Lacerda",
-    planos: [{ sigla: "PBDC", inscricao: "14/12/1987", situacao: "Assistido" }, { sigla: "PCD", inscricao: "22/09/2018", situacao: "Ativo" }],
-    uf: "CE",
-    idade: 30,
-    sexo: "M",
-    email: "gabriel.lacerda@exemplo.com.br",
-    telefone: "(85) 96967-8066",
-  },
-  {
-    cpf: "148.465.648-26",
-    nome: "Emerson Vargas Pontes",
-    planos: [{ sigla: "CENTRUSPREV+", inscricao: "19/10/1996", situacao: "Assistido" }],
-    uf: "ES",
-    idade: 70,
-    sexo: "M",
-    email: "emerson.pontes@exemplo.com.br",
-    telefone: "(27) 97653-9977",
-  },
-  {
-    cpf: "917.693.676-41",
-    nome: "Henrique Barros Castro",
-    planos: [{ sigla: "PBB", inscricao: "08/07/1991", situacao: "Ativo" }],
-    uf: "PE",
-    idade: 58,
-    sexo: "M",
-    email: "henrique.castro@exemplo.com.br",
-    telefone: "(81) 99486-8611",
-  },
-  {
-    cpf: "788.957.986-80",
-    nome: "Wagner Pereira Henriques",
-    planos: [{ sigla: "PBDC", inscricao: "09/08/2015", situacao: "Assistido" }],
-    uf: "PA",
-    idade: 36,
-    sexo: "M",
-    email: "wagner.henriques@exemplo.com.br",
-    telefone: "(91) 95543-9540",
-  },
-];
 
 export type Dependente = {
   nome: string;
@@ -526,181 +45,390 @@ export type Dependente = {
   cpfTitular: string;
   parentesco: string;
   idade: number;
-  plano: string;
+  // Um dependente pode estar vinculado a mais de um plano, desde que o
+  // titular também possua vínculo em cada um deles.
+  planos: string[];
 };
 
-export const dependentes: Dependente[] = [
+// ---------------------------------------------------------------------------
+// Gerador determinístico (mulberry32): mesma semente => mesmos dados sempre.
+// ---------------------------------------------------------------------------
+
+function mulberry32(seed: number) {
+  let s = seed >>> 0;
+  return function random() {
+    s |= 0;
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rng = mulberry32(20260821);
+
+function randInt(min: number, max: number) {
+  return Math.floor(rng() * (max - min + 1)) + min;
+}
+
+function pick<T>(arr: readonly T[]): T {
+  return arr[Math.floor(rng() * arr.length)]!;
+}
+
+// Fisher-Yates: ao contrário de `sort(() => rng() - 0.5)`, consome sempre
+// exatamente arr.length-1 números aleatórios, garantindo o mesmo resultado
+// no servidor (SSR) e no cliente para a mesma semente.
+function embaralhar<T>(arr: readonly T[]): T[] {
+  const copia = arr.slice();
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const tmp = copia[i]!;
+    copia[i] = copia[j]!;
+    copia[j] = tmp;
+  }
+  return copia;
+}
+
+function pickWeighted<T>(items: readonly (readonly [T, number])[]): T {
+  const total = items.reduce((soma, [, peso]) => soma + peso, 0);
+  let r = rng() * total;
+  for (const [item, peso] of items) {
+    if (r < peso) return item;
+    r -= peso;
+  }
+  return items[items.length - 1]![0];
+}
+
+function semAcentos(texto: string) {
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
+const PRIMEIRO_NOME_M = [
+  "Roberto", "Jorge", "Fernando", "Paulo", "Ricardo", "Eduardo", "Marcelo", "André",
+  "Gustavo", "Leonardo", "Sérgio", "Bruno", "Marcos", "Cesar", "Fabio", "Kleber",
+  "Diego", "Gilberto", "Mauricio", "Emerson", "Henrique", "Wagner", "Thiago", "Gabriel",
+  "Rodrigo", "Felipe", "Lucas", "Carlos", "Daniel", "Rafael", "Alexandre", "Vinicius",
+  "Renato", "Julio", "Otavio", "Igor",
+];
+const PRIMEIRO_NOME_F = [
+  "Ana", "Beatriz", "Carla", "Juliana", "Renata", "Larissa", "Vanessa", "Mônica",
+  "Camila", "Flavia", "Tatiana", "Regina", "Fernanda", "Priscila", "Marina", "Elisa",
+  "Luciana", "Ingrid", "Sofia", "Clara", "Helena", "Patricia", "Aline", "Bianca",
+  "Debora", "Simone", "Vera", "Cristina", "Amanda", "Natalia", "Gabriela", "Isabela",
+  "Roberta", "Silvia",
+];
+const SOBRENOMES = [
+  "Peixoto", "Nunes", "Almeida", "Andrade", "Furtado", "Lima", "Cabral", "Ribeiro",
+  "Mendes", "Souza", "Moraes", "Campos", "Freire", "Tavares", "Lopes", "Nascimento",
+  "Barros", "Duarte", "Cavalcanti", "Vieira", "Sampaio", "Rocha", "Albuquerque",
+  "Pinheiro", "Pires", "Monteiro", "Farias", "Queiroz", "Teixeira", "Ramos", "Brito",
+  "Oliveira", "Leal", "Rezende", "Pereira", "Alves", "Kowalski", "Machado", "Esteves",
+  "Ibrahim", "Quintana", "Lobato", "Uchoa", "Holanda", "Teles", "Bezerra", "Vargas",
+  "Xavier", "Jardim", "Gonçalves", "Zanetti", "Castro", "Henriques", "Costa", "Silva",
+  "Santos", "Carvalho", "Martins", "Dias", "Correia", "Fonseca", "Guedes", "Aragão",
+];
+
+const UF_DDD: Record<string, string> = {
+  DF: "61", SP: "11", RJ: "21", MG: "31", RS: "51", PR: "41", BA: "71", PE: "81",
+  CE: "85", GO: "62", ES: "27", SC: "48", AM: "92", MA: "98", PA: "91", AL: "82",
+  PB: "83", RN: "84", MT: "65", MS: "67", TO: "63", RO: "69", PI: "86", SE: "79",
+};
+
+const UF_PESO: Array<readonly [string, number]> = [
+  ["DF", 30], ["SP", 14], ["RJ", 10], ["MG", 8], ["RS", 5], ["PR", 4.5], ["BA", 4],
+  ["PE", 3.5], ["CE", 2.5], ["GO", 3], ["ES", 2.5], ["SC", 3], ["AM", 2], ["MA", 2],
+  ["PA", 2], ["AL", 1], ["PB", 1], ["RN", 1], ["MT", 1], ["MS", 1], ["TO", 1],
+  ["RO", 1], ["PI", 1], ["SE", 1],
+];
+
+const PLANO_PESO: Array<readonly ["PBB" | "PBDC" | "PCD" | "CP+", number]> = [
+  ["PBB", 10], ["PBDC", 50], ["PCD", 6], ["CP+", 34],
+];
+
+const SITUACAO_POR_PLANO: Record<
+  string,
+  Array<readonly ["Ativo" | "Assistido" | "Autopatrocinado", number]>
+> = {
+  PBB: [["Ativo", 45], ["Assistido", 25], ["Autopatrocinado", 30]],
+  PBDC: [["Ativo", 10], ["Assistido", 75], ["Autopatrocinado", 15]],
+  PCD: [["Ativo", 35], ["Assistido", 30], ["Autopatrocinado", 35]],
+  "CP+": [["Ativo", 35], ["Assistido", 35], ["Autopatrocinado", 30]],
+};
+
+function dataInscricaoAleatoria(idade: number) {
+  const anoAtual = 2026;
+  const anoMinimo = Math.max(1980, anoAtual - idade + 18);
+  const ano = randInt(anoMinimo, 2025);
+  const mes = randInt(1, 12);
+  const dia = randInt(1, 28);
+  return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}/${ano}`;
+}
+
+function gerarCpf(usados: Set<string>) {
+  let cpf = "";
+  do {
+    const n = () => randInt(0, 9);
+    cpf = `${n()}${n()}${n()}.${n()}${n()}${n()}.${n()}${n()}${n()}-${n()}${n()}`;
+  } while (usados.has(cpf));
+  usados.add(cpf);
+  return cpf;
+}
+
+const TOTAL_PARTICIPANTES = 3000;
+const TOTAL_COLABORADORES_CENTRUS = 30;
+
+function gerarParticipantes(): Participante[] {
+  const cpfsUsados = new Set<string>();
+  const emailsUsados = new Set<string>();
+  const lista: Participante[] = [];
+
+  for (let i = 0; i < TOTAL_PARTICIPANTES; i++) {
+    const sexo: "M" | "F" = rng() < 0.58 ? "M" : "F";
+    const primeiroNome = pick(sexo === "M" ? PRIMEIRO_NOME_M : PRIMEIRO_NOME_F);
+    const sobrenome1 = pick(SOBRENOMES);
+    const sobrenome2 = pick(SOBRENOMES);
+    const nome = `${primeiroNome} ${sobrenome1} ${sobrenome2}`;
+
+    const emailBase = `${semAcentos(primeiroNome)}.${semAcentos(sobrenome2)}`.toLowerCase();
+    let email = `${emailBase}@exemplo.com.br`;
+    let sufixo = 1;
+    while (emailsUsados.has(email)) {
+      sufixo += 1;
+      email = `${emailBase}${sufixo}@exemplo.com.br`;
+    }
+    emailsUsados.add(email);
+
+    const uf = pickWeighted(UF_PESO);
+    const ddd = UF_DDD[uf] ?? "61";
+    const idade = randInt(24, 78);
+
+    const siglaPrincipal = pickWeighted(PLANO_PESO);
+    const situacaoPrincipal = pickWeighted(SITUACAO_POR_PLANO[siglaPrincipal]!);
+    const planosVinculo: VinculoPlano[] = [
+      { sigla: siglaPrincipal, inscricao: dataInscricaoAleatoria(idade), situacao: situacaoPrincipal },
+    ];
+
+    if (rng() < 0.13) {
+      const outrasSiglas = (["PBB", "PBDC", "PCD", "CP+"] as const).filter(
+        (s) => s !== siglaPrincipal,
+      );
+      const siglaSecundaria = pick(outrasSiglas);
+      const situacaoSecundaria = pickWeighted(SITUACAO_POR_PLANO[siglaSecundaria]!);
+      planosVinculo.push({
+        sigla: siglaSecundaria,
+        inscricao: dataInscricaoAleatoria(idade),
+        situacao: situacaoSecundaria,
+      });
+    }
+
+    lista.push({
+      cpf: gerarCpf(cpfsUsados),
+      nome,
+      planos: planosVinculo,
+      uf,
+      idade,
+      sexo,
+      email,
+      telefone: `(${ddd}) 9${randInt(1000, 9999)}-${randInt(1000, 9999)}`,
+    });
+  }
+
+  // Define exatamente TOTAL_COLABORADORES_CENTRUS pessoas como colaboradoras
+  // ativas da Centrus: precisam ter vínculo Ativo no CP+, o plano próprio da
+  // fundação para o quadro de funcionários.
+  const indicesEmbaralhados = embaralhar(lista.map((_, i) => i));
+  let marcados = 0;
+  for (const indice of indicesEmbaralhados) {
+    if (marcados >= TOTAL_COLABORADORES_CENTRUS) break;
+    const participante = lista[indice]!;
+    const vinculoCp = participante.planos.find((v) => v.sigla === "CP+");
+    if (vinculoCp) {
+      vinculoCp.situacao = "Ativo";
+    } else {
+      participante.planos.push({
+        sigla: "CP+",
+        inscricao: dataInscricaoAleatoria(participante.idade),
+        situacao: "Ativo",
+      });
+    }
+    participante.colaboradorCentrus = true;
+    marcados += 1;
+  }
+
+  return lista;
+}
+
+const PARENTESCO_PESO: Array<readonly ["Cônjuge" | "Filho(a)" | "Enteado(a)", number]> = [
+  ["Cônjuge", 35],
+  ["Filho(a)", 45],
+  ["Enteado(a)", 20],
+];
+
+const QTD_DEPENDENTES_PESO: Array<readonly [number, number]> = [
+  [0, 45],
+  [1, 40],
+  [2, 12],
+  [3, 3],
+];
+
+function gerarDependentes(titulares: Participante[]): Dependente[] {
+  const cpfsUsados = new Set<string>(titulares.map((p) => p.cpf));
+  const lista: Dependente[] = [];
+
+  for (const titular of titulares) {
+    const qtd = pickWeighted(QTD_DEPENDENTES_PESO);
+    for (let i = 0; i < qtd; i++) {
+      const parentesco = pickWeighted(PARENTESCO_PESO);
+      const sexoDependente: "M" | "F" = rng() < 0.5 ? "M" : "F";
+      const primeiroNome = pick(sexoDependente === "M" ? PRIMEIRO_NOME_M : PRIMEIRO_NOME_F);
+      const sobrenomeTitular = titular.nome.split(" ").slice(1)[0] ?? pick(SOBRENOMES);
+      const nome = `${primeiroNome} ${sobrenomeTitular} ${pick(SOBRENOMES)}`;
+
+      const idade =
+        parentesco === "Cônjuge" ? Math.max(18, titular.idade + randInt(-8, 8)) : randInt(0, 32);
+
+      const siglasTitular = titular.planos.map((v) => v.sigla);
+      const planosDependente =
+        siglasTitular.length > 1 && rng() < 0.25 ? siglasTitular : [pick(siglasTitular)];
+
+      lista.push({
+        nome,
+        cpf: gerarCpf(cpfsUsados),
+        titular: titular.nome,
+        cpfTitular: titular.cpf,
+        parentesco,
+        idade,
+        planos: planosDependente,
+      });
+    }
+  }
+
+  return lista;
+}
+
+export const participantes: Participante[] = gerarParticipantes();
+export const dependentes: Dependente[] = gerarDependentes(participantes);
+
+const PLANOS_META: Array<Omit<Plano, "participantes">> = [
   {
-    nome: "Lucas Peixoto Martins",
-    cpf: "902.114.338-70",
-    titular: "Ana Carolina Peixoto",
-    cpfTitular: "184.902.371-05",
-    parentesco: "Filho(a)",
-    idade: 16,
-    plano: "CENTRUSPREV+",
+    sigla: "PBB",
+    descricao: "PLANO BASICO DE BENEFICIOS",
+    patrocinador: "Associação Nacional dos Servidores",
+    cnpj: "03.658.417/0001-72",
+    situacao: "Ativo",
   },
   {
-    nome: "Marcelo Peixoto Souza",
-    cpf: "526.018.159-17",
-    titular: "Ana Carolina Peixoto",
-    cpfTitular: "184.902.371-05",
-    parentesco: "Cônjuge",
-    idade: 49,
-    plano: "PBB",
+    sigla: "PBDC",
+    descricao: "PLANO DE BENEFICIO DEFINIDO CENTRUS",
+    patrocinador: "Banco Central do Brasil",
+    cnpj: "00.038.166/0001-05",
+    situacao: "Em saldamento",
   },
   {
-    nome: "Beatriz Peixoto Martins",
-    cpf: "830.166.131-80",
-    titular: "Ana Carolina Peixoto",
-    cpfTitular: "184.902.371-05",
-    parentesco: "Filho(a)",
-    idade: 12,
-    plano: "CENTRUSPREV+",
+    sigla: "PCD",
+    descricao: "PLANO DE CONTRIBUICAO DEFINIDA",
+    patrocinador: "Cooperativa Agroindustrial Central",
+    cnpj: "12.774.508/0001-19",
+    situacao: "Encerrado",
   },
   {
-    nome: "Helena Nunes de Almeida",
-    cpf: "118.446.702-31",
-    titular: "Roberto Nunes de Almeida",
-    cpfTitular: "225.771.008-44",
-    parentesco: "Cônjuge",
-    idade: 65,
-    plano: "PBDC",
-  },
-  {
-    nome: "Clara Andrade Souza",
-    cpf: "530.887.104-66",
-    titular: "Jorge Luiz Andrade",
-    cpfTitular: "402.117.633-90",
-    parentesco: "Filho(a)",
-    idade: 21,
-    plano: "PBB",
-  },
-  {
-    nome: "Otávio Furtado Lima",
-    cpf: "641.209.773-52",
-    titular: "Beatriz Furtado Lima",
-    cpfTitular: "556.903.114-28",
-    parentesco: "Cônjuge",
-    idade: 64,
-    plano: "CENTRUSPREV+",
-  },
-  {
-    nome: "Sofia Cabral Ribeiro",
-    cpf: "883.550.226-14",
-    titular: "Fernando Cabral Ribeiro",
-    cpfTitular: "671.220.845-13",
-    parentesco: "Filho(a)",
-    idade: 33,
-    plano: "PBDC",
-  },
-  {
-    nome: "Felipe Lobato Jardim",
-    cpf: "665.876.036-59",
-    titular: "Tatiana Lobato Jardim",
-    cpfTitular: "045.053.315-81",
-    parentesco: "Enteado(a)",
-    idade: 5,
-    plano: "CENTRUSPREV+",
-  },
-  {
-    nome: "Priscila Barros Castro",
-    cpf: "054.668.893-72",
-    titular: "Henrique Barros Castro",
-    cpfTitular: "917.693.676-41",
-    parentesco: "Filho(a)",
-    idade: 2,
-    plano: "PBB",
-  },
-  {
-    nome: "Marina Vargas Bezerra",
-    cpf: "272.980.699-94",
-    titular: "Fabio Teles Bezerra",
-    cpfTitular: "871.331.509-80",
-    parentesco: "Cônjuge",
-    idade: 56,
-    plano: "PBDC",
-  },
-  {
-    nome: "Elisa Vargas Esteves",
-    cpf: "720.465.375-53",
-    titular: "Kleber Vargas Esteves",
-    cpfTitular: "738.299.737-62",
-    parentesco: "Filho(a)",
-    idade: 3,
-    plano: "PBB",
-  },
-  {
-    nome: "Henrique Pereira Ibrahim",
-    cpf: "719.374.529-87",
-    titular: "Tatiana Machado Esteves",
-    cpfTitular: "341.316.475-30",
-    parentesco: "Cônjuge",
-    idade: 68,
-    plano: "PBDC",
-  },
-  {
-    nome: "Nelson Bezerra Vargas",
-    cpf: "190.496.631-85",
-    titular: "Diego Bezerra Vargas",
-    cpfTitular: "338.726.247-41",
-    parentesco: "Filho(a)",
-    idade: 25,
-    plano: "PBB",
-  },
-  {
-    nome: "Luciana Ibrahim Pereira",
-    cpf: "726.284.987-69",
-    titular: "Marcos Ibrahim Pereira",
-    cpfTitular: "696.532.871-16",
-    parentesco: "Enteado(a)",
-    idade: 7,
-    plano: "PBDC",
-  },
-  {
-    nome: "Ingrid Quintana Lobato",
-    cpf: "314.737.996-53",
-    titular: "Regina Quintana Lobato",
-    cpfTitular: "184.514.627-10",
-    parentesco: "Enteado(a)",
-    idade: 18,
-    plano: "PCD",
-  },
-  {
-    nome: "Lucas Vargas Pontes",
-    cpf: "678.377.701-47",
-    titular: "Emerson Vargas Pontes",
-    cpfTitular: "148.465.648-26",
-    parentesco: "Filho(a)",
-    idade: 13,
-    plano: "CENTRUSPREV+",
-  },
-  {
-    nome: "Emerson Neves Yamada",
-    cpf: "788.568.557-44",
-    titular: "Flavia Alves Kowalski",
-    cpfTitular: "423.511.615-54",
-    parentesco: "Cônjuge",
-    idade: 53,
-    plano: "PBB",
-  },
-  {
-    nome: "Gabriel Gonçalves Zanetti",
-    cpf: "351.823.374-85",
-    titular: "Fernanda Gonçalves Zanetti",
-    cpfTitular: "337.543.303-61",
-    parentesco: "Filho(a)",
-    idade: 17,
-    plano: "PBB",
-  },
-  {
-    nome: "Carolina Pereira Henriques",
-    cpf: "271.094.777-53",
-    titular: "Wagner Pereira Henriques",
-    cpfTitular: "788.957.986-80",
-    parentesco: "Filho(a)",
-    idade: 2,
-    plano: "PBDC",
+    sigla: "CP+",
+    descricao: "PLANO INSTITUIDO CP+",
+    patrocinador: "Centrus - Fundação Banco Central",
+    cnpj: "00.493.019/0001-40",
+    situacao: "Ativo",
   },
 ];
+
+export const planos: Plano[] = PLANOS_META.map((meta) => ({
+  ...meta,
+  participantes: participantes.filter((p) => p.planos.some((v) => v.sigla === meta.sigla)).length,
+}));
+
+export const totalParticipantes = participantes.length;
+export const totalDependentes = dependentes.length;
+export const idadeMedia = participantes.reduce((s, p) => s + p.idade, 0) / participantes.length;
+export const totalPatrocinadores = new Set(PLANOS_META.map((p) => p.patrocinador)).size;
+
+const UFS_PRINCIPAIS = ["DF", "SP", "RJ", "MG", "RS", "PR", "BA", "PE", "CE"];
+
+export function calcularPorEstado(lista: Participante[]) {
+  const contagem = new Map<string, number>();
+  for (const p of lista) contagem.set(p.uf, (contagem.get(p.uf) ?? 0) + 1);
+  const principais = UFS_PRINCIPAIS.map((uf) => ({ uf, participantes: contagem.get(uf) ?? 0 }));
+  const outros = [...contagem.entries()]
+    .filter(([uf]) => !UFS_PRINCIPAIS.includes(uf))
+    .reduce((soma, [, quantidade]) => soma + quantidade, 0);
+  return [...principais, { uf: "Outros", participantes: outros }];
+}
+
+const FAIXAS: Array<readonly [string, number, number]> = [
+  ["Até 30 anos", 0, 30],
+  ["31 a 40 anos", 31, 40],
+  ["41 a 50 anos", 41, 50],
+  ["51 a 60 anos", 51, 60],
+  ["61 a 70 anos", 61, 70],
+  ["Acima de 70", 71, 999],
+];
+
+export function calcularFaixaEtaria(lista: Participante[]) {
+  return FAIXAS.map(([faixa, min, max]) => ({
+    faixa,
+    quantidade: lista.filter((p) => p.idade >= min && p.idade <= max).length,
+  }));
+}
+
+export function calcularPorGenero(lista: Participante[]) {
+  return [
+    { genero: "Masculino", quantidade: lista.filter((p) => p.sexo === "M").length },
+    { genero: "Feminino", quantidade: lista.filter((p) => p.sexo === "F").length },
+  ];
+}
+
+export const porEstado = calcularPorEstado(participantes);
+export const faixaEtaria = calcularFaixaEtaria(participantes);
+export const porGenero = calcularPorGenero(participantes);
+
+const MESES = [
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez",
+];
+
+function gerarEvolucao(totalAtivosFinal: number, totalDependentesFinal: number) {
+  const pontos: Array<{ mes: string; ano: number; ativos: number; dependentes: number }> = [];
+  const anoInicio = 2024;
+  const totalMeses = 32; // Jan/2024 a Ago/2026
+  const inicioAtivos = Math.round(totalAtivosFinal * 0.85);
+  const inicioDependentes = Math.round(totalDependentesFinal * 0.85);
+
+  for (let i = 0; i < totalMeses; i++) {
+    const progresso = i / (totalMeses - 1);
+    const ruido = 1 + (rng() - 0.5) * 0.01;
+    const ativos =
+      i === totalMeses - 1
+        ? totalAtivosFinal
+        : Math.round((inicioAtivos + (totalAtivosFinal - inicioAtivos) * progresso) * ruido);
+    const dependentesQtd =
+      i === totalMeses - 1
+        ? totalDependentesFinal
+        : Math.round(
+            (inicioDependentes + (totalDependentesFinal - inicioDependentes) * progresso) * ruido,
+          );
+    const mesIndex = i % 12;
+    const ano = anoInicio + Math.floor(i / 12);
+    pontos.push({ mes: MESES[mesIndex]!, ano, ativos, dependentes: dependentesQtd });
+  }
+  return pontos;
+}
+
+export const evolucao = gerarEvolucao(totalParticipantes, totalDependentes);
+
+// Identificador usado nos filtros de plano para representar a opção
+// "CENTRUSFUNC": colaboradores ativos da Centrus que também são
+// participantes de algum plano. Não é um plano real, por isso fica fora
+// do array `planos` (evita distorcer totais como `totalParticipantes`).
+export const CENTRUSFUNC = "CENTRUSFUNC";
+
+export const colaboradoresCentrus = participantes.filter((p) => p.colaboradorCentrus);
+export const totalColaboradoresCentrus = colaboradoresCentrus.length;
 
 export const nf = new Intl.NumberFormat("pt-BR");

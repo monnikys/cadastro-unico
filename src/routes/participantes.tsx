@@ -3,7 +3,14 @@ import { useMemo, useState } from "react";
 import { Search, Users } from "lucide-react";
 import { Shell } from "@/components/dashboard/Shell";
 import { Panel, StatCard } from "@/components/dashboard/StatCard";
-import { participantes, planos } from "@/data/cadastro";
+import {
+  CENTRUSFUNC,
+  nf,
+  participantes,
+  planos,
+  totalColaboradoresCentrus,
+  totalParticipantes,
+} from "@/data/cadastro";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -42,28 +49,46 @@ function ParticipantesPage() {
           participante.nome.toLowerCase().includes(termo) ||
           participante.cpf.includes(termo)) &&
         (planoSelecionado === "todos" ||
-          participante.planos.some((plano) => plano.sigla === planoSelecionado)),
+          (planoSelecionado === CENTRUSFUNC
+            ? participante.colaboradorCentrus === true
+            : participante.planos.some((plano) => plano.sigla === planoSelecionado))),
     );
   }, [busca, planoSelecionado]);
 
   const planoAtivo = planos.find((plano) => plano.sigla === planoSelecionado);
+  const centrusFuncAtivo = planoSelecionado === CENTRUSFUNC;
+
+  const LIMITE_RESULTADOS = 100;
+  const resultados = lista.slice(0, LIMITE_RESULTADOS);
 
   return (
     <Shell
       title="Participantes por plano"
       subtitle="Consulte todos os participantes de cada plano. Cada CPF é exibido uma única vez, mesmo quando possui mais de um vínculo."
     >
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           label="Participantes exibidos"
-          value={String(lista.length)}
-          hint={planoAtivo ? "Vinculados ao " + planoAtivo.sigla : "Todos os planos"}
+          value={nf.format(lista.length)}
+          hint={
+            centrusFuncAtivo
+              ? "Colaboradores ativos da Centrus"
+              : planoAtivo
+                ? "Vinculados ao " + planoAtivo.sigla
+                : "Todos os planos"
+          }
           icon={Users}
         />
         <StatCard
           label="Com mais de um plano"
-          value={String(lista.filter((participante) => participante.planos.length > 1).length)}
+          value={nf.format(lista.filter((participante) => participante.planos.length > 1).length)}
           hint="CPFs com vínculos adicionais"
+          icon={Users}
+        />
+        <StatCard
+          label="Colaboradores Centrus"
+          value={nf.format(totalColaboradoresCentrus)}
+          hint={`${Math.round((totalColaboradoresCentrus / totalParticipantes) * 100)}% da base de participantes`}
           icon={Users}
         />
       </div>
@@ -95,6 +120,7 @@ function ParticipantesPage() {
                 {plano.sigla} — {plano.descricao}
               </option>
             ))}
+            <option value={CENTRUSFUNC}>CENTRUSFUNC — Colaboradores ativos da Centrus</option>
           </select>
         </div>
 
@@ -110,16 +136,25 @@ function ParticipantesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lista.map((participante) => {
+              {resultados.map((participante) => {
                 const planosExibidos =
-                  planoSelecionado === "todos"
+                  planoSelecionado === "todos" || centrusFuncAtivo
                     ? participante.planos.slice(0, 1)
                     : participante.planos.filter((plano) => plano.sigla === planoSelecionado);
                 const planosAdicionais = participante.planos.length - planosExibidos.length;
 
                 return (
                   <TableRow key={participante.cpf}>
-                    <TableCell className="font-medium">{participante.nome}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <span>{participante.nome}</span>
+                        {participante.colaboradorCentrus ? (
+                          <Badge className="border-transparent bg-success/15 text-[10px] text-success">
+                            Centrus
+                          </Badge>
+                        ) : null}
+                      </div>
+                    </TableCell>
                     <TableCell className="tabular-nums text-muted-foreground">
                       {participante.cpf}
                     </TableCell>
@@ -152,6 +187,12 @@ function ParticipantesPage() {
             </TableBody>
           </Table>
         </div>
+        {lista.length > LIMITE_RESULTADOS ? (
+          <p className="mt-2 px-1 text-xs text-muted-foreground">
+            Mostrando {LIMITE_RESULTADOS} de {lista.length} participantes. Refine a busca ou o
+            plano para ver outros registros.
+          </p>
+        ) : null}
       </Panel>
     </Shell>
   );
